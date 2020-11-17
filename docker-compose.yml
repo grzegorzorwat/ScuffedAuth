@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  scuffedauth:
+    image: ${DOCKER_REGISTRY-}scuffedauth
+    build:
+      context: .
+      dockerfile: ScuffedAuth/Dockerfile
