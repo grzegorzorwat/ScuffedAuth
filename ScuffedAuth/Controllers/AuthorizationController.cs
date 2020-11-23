@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ScuffedAuth.Authorization.ClientCredentials;
 using ScuffedAuth.Authorization.TokenEndpoint;
 using System.ComponentModel.DataAnnotations;
 
@@ -9,8 +8,11 @@ namespace ScuffedAuth.Controllers
     [Route("oauth")]
     public class AuthorizationController : ControllerBase
     {
-        public AuthorizationController()
+        private readonly ITokenService _tokenService;
+
+        public AuthorizationController(ITokenService tokenService)
         {
+            _tokenService = tokenService;
         }
 
         [HttpPost]
@@ -18,7 +20,14 @@ namespace ScuffedAuth.Controllers
         [Consumes("application/x-www-form-urlencoded")]
         public ActionResult Token([FromHeader, Required] string authorization, [FromQuery] TokenRequest tokenRequest)
         {
-            return Ok();
+            var response = _tokenService.GetToken(authorization, tokenRequest);
+
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }
+
+            return Ok(response.Token);
         }
     }
 }

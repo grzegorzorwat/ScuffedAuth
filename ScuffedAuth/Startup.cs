@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
+using ScuffedAuth.Authorization;
+using ScuffedAuth.Authorization.TokenEndpoint;
 
 namespace ScuffedAuth
 {
@@ -48,6 +50,8 @@ namespace ScuffedAuth
                         }
                     });
                 });
+
+            services.AddScoped<ITokenService, TokenService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
