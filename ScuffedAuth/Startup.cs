@@ -19,22 +19,23 @@ namespace ScuffedAuth
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ScuffedAuth", Version = "v1" });
-                c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
+            services
+                .AddSwaggerGen(c =>
                 {
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "basic",
-                    In = ParameterLocation.Header,
-                    Description = "Basic Authorization header using the Bearer scheme."
-                });
-
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
+                    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ScuffedAuth", Version = "v1" });
+                    c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
                     {
-                          new OpenApiSecurityScheme
+                        Name = "Authorization",
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "basic",
+                        In = ParameterLocation.Header,
+                        Description = "Basic Authorization header using the Bearer scheme."
+                    });
+
+                    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    {
+                        {
+                            new OpenApiSecurityScheme
                             {
                                 Reference = new OpenApiReference
                                 {
@@ -43,9 +44,9 @@ namespace ScuffedAuth
                                 }
                             },
                             new string[] {}
-                    }
+                        }
+                    });
                 });
-            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
