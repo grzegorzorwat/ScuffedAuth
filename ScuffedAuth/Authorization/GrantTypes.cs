@@ -5,7 +5,7 @@ namespace ScuffedAuth.Authorization
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum GrantTypes
     {
-        undefined,
+        unidentified,
         client_credentials
     }
 }
