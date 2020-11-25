@@ -52,6 +52,7 @@ namespace ScuffedAuth
                 });
 
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<ITokenGenerator, TokenGenerator>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
