@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
 using ScuffedAuth.Authorization;
+using ScuffedAuth.Authorization.ClientCredentials;
 using ScuffedAuth.Authorization.TokenEndpoint;
 
 namespace ScuffedAuth
@@ -52,6 +53,7 @@ namespace ScuffedAuth
                 });
 
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IClientCredentialsAuthenticator, ClientCredentialsAuthenticator>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
         }
 
