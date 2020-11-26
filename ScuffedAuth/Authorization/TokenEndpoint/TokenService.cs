@@ -1,18 +1,18 @@
-﻿using ScuffedAuth.Authorization.ClientCredentials;
-
-namespace ScuffedAuth.Authorization.TokenEndpoint
+﻿namespace ScuffedAuth.Authorization.TokenEndpoint
 {
     public class TokenService : ITokenService
     {
+        private readonly AuthorizationFactory _authorizationFactory;
+
+        public TokenService(AuthorizationFactory authorizationFactory)
+        {
+            _authorizationFactory = authorizationFactory;
+        }
+
         public TokenResponse GetToken(string authorizationHeader, TokenRequest request)
         {
-            if (request.GrantType == GrantTypes.client_credentials)
-            {
-                var tokenProvider = new ClientCredentialsAuthorization();
-                return tokenProvider.GetToken(authorizationHeader);
-            }
-
-            return new TokenResponse("Grant type must be defined.");
+            var authorization = _authorizationFactory.GetAuthorization(request.GrantType);
+            return authorization.GetToken(authorizationHeader);
         }
     }
 }
