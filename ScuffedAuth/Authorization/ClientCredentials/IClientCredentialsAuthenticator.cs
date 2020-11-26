@@ -1,6 +1,6 @@
 ﻿namespace ScuffedAuth.Authorization.ClientCredentials
 {
-    public interface IClientCredentialsAuthentication
+    public interface IClientCredentialsAuthenticator
     {
         bool Authenticate(string clientId, string clientSecret);
     }
