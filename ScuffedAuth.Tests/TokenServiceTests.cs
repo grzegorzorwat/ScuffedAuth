@@ -129,7 +129,7 @@ namespace ScuffedAuth.Tests
                 .Returns(args => (string)args[0] == "clientId" && (string)args[1] == "clientSecret");
             factory
                 .GetAuthorization(GrantTypes.client_credentials)
-                .Returns(new ClientCredentialsAuthorization(authenticator, tokenGenerator));
+                .Returns(new ClientCredentialsAuthorization(authenticator, tokenGenerator, new ClientCredentialsDecoder()));
             return new TokenService(factory);
         }
 

@@ -8,11 +8,15 @@ namespace ScuffedAuth.Authorization.ClientCredentials
     {
         private readonly ITokenGenerator _tokenGenerator;
         private readonly IClientCredentialsAuthenticator _authenticator;
+        private readonly ClientCredentialsDecoder _decoder;
 
-        public ClientCredentialsAuthorization(IClientCredentialsAuthenticator authenticator, ITokenGenerator tokenGenerator)
+        public ClientCredentialsAuthorization(IClientCredentialsAuthenticator authenticator,
+            ITokenGenerator tokenGenerator,
+            ClientCredentialsDecoder decoder)
         {
             _authenticator = authenticator;
             _tokenGenerator = tokenGenerator;
+            _decoder = decoder;
         }
 
         public TokenResponse GetToken(string authorizationHeader)
@@ -27,44 +31,12 @@ namespace ScuffedAuth.Authorization.ClientCredentials
 
         private bool Authorize(string authorizationHeader)
         {
-            var (clientId, clientSecret) = DecodeCredentials(authorizationHeader);
-
-            if (string.IsNullOrEmpty(clientId)
-                || string.IsNullOrEmpty(clientSecret))
+            if (!_decoder.TryDecode(authorizationHeader, out var credentials))
             {
                 return false;
             }
 
-            return _authenticator.Authenticate(clientId, clientSecret);
-        }
-
-        private (string clientId, string clientSecret) DecodeCredentials(string authorizationHeader)
-        {
-            if (string.IsNullOrEmpty(authorizationHeader) ||
-                !authorizationHeader.StartsWith("Basic "))
-            {
-                return (string.Empty, string.Empty);
-            }
-
-            string encoded = authorizationHeader.Replace("Basic ", string.Empty);
-            var buffer = new Span<byte>(new byte[encoded.Length]);
-
-            if (!Convert.TryFromBase64String(encoded, buffer, out int bytesParsed))
-            {
-                return (string.Empty, string.Empty);
-            }
-
-            string decoded = Encoding.ASCII.GetString(buffer.Slice(0, bytesParsed));
-            int separatorIndex = decoded.IndexOf(':');
-
-            if (separatorIndex == -1)
-            {
-                return (string.Empty, string.Empty);
-            }
-
-            string clientId = decoded[..separatorIndex];
-            string clientSecret = decoded[(separatorIndex + 1)..];
-            return (clientId, clientSecret);
+            return _authenticator.Authenticate(credentials.clientId, credentials.clientSecret);
         }
     }
 }

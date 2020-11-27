@@ -64,6 +64,8 @@ namespace ScuffedAuth
                 .AddScoped<ClientCredentialsAuthorization>()
                 .AddScoped<IAuthorization, ClientCredentialsAuthorization>(
                     s => s.GetRequiredService<ClientCredentialsAuthorization>());
+            services
+                .AddScoped<ClientCredentialsDecoder>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
