@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text;
-using ScuffedAuth.Authorization.TokenEndpoint;
+﻿using ScuffedAuth.Authorization.TokenEndpoint;
 
 namespace ScuffedAuth.Authorization.ClientCredentials
 {
@@ -36,7 +34,7 @@ namespace ScuffedAuth.Authorization.ClientCredentials
                 return false;
             }
 
-            return _authenticator.Authenticate(credentials.clientId, credentials.clientSecret);
+            return _authenticator.Authenticate(credentials.Id, credentials.Secret);
         }
     }
 }

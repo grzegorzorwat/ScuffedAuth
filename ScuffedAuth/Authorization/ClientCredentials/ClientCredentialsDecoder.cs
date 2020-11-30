@@ -9,9 +9,9 @@ namespace ScuffedAuth.Authorization.ClientCredentials
 
         private string _value = string.Empty;
         private bool _canContinue = true;
-        private (string clientId, string clientSecret) _credentials = (string.Empty, string.Empty);
+        private ClientCredentialsModel _credentials = default!;
 
-        public bool TryDecode(string authorizationHeader, out (string clientId, string clientSecret) credentials)
+        public bool TryDecode(string authorizationHeader, out ClientCredentialsModel credentials)
         {
             SetUp(authorizationHeader);
             Decode();
@@ -23,7 +23,7 @@ namespace ScuffedAuth.Authorization.ClientCredentials
         {
             _value = authorizationHeader;
             _canContinue = true;
-            _credentials = (string.Empty, string.Empty);
+            _credentials = default!;
         }
 
         private void Decode()
@@ -82,8 +82,8 @@ namespace ScuffedAuth.Authorization.ClientCredentials
                 return;
             }
 
-            _credentials.clientId = _value[..separatorIndex];
-            _credentials.clientSecret = _value[(separatorIndex + 1)..];
+            _credentials = new ClientCredentialsModel(_value[..separatorIndex],
+                _value[(separatorIndex + 1)..]);
         }
     }
 }
