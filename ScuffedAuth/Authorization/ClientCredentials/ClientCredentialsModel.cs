@@ -10,5 +10,8 @@
 
         public string Id { get; }
         public string Secret { get; }
+
+        public static ClientCredentialsModel Empty =>
+            new ClientCredentialsModel(string.Empty, string.Empty);
     }
 }
