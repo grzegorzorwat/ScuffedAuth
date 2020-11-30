@@ -1,11 +1,10 @@
-﻿using FluentAssertions;
+﻿using NSubstitute;
 using ScuffedAuth.Authorization;
+using ScuffedAuth.Authorization.ClientCredentials;
 using ScuffedAuth.Authorization.TokenEndpoint;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using NSubstitute;
-using ScuffedAuth.Authorization.ClientCredentials;
 using Xunit;
 
 namespace ScuffedAuth.Tests
@@ -23,35 +22,7 @@ namespace ScuffedAuth.Tests
 
             TokenResponse response = service.GetToken(string.Empty, request);
 
-            response.Success.Should().BeFalse();
-        }
-
-        [Fact]
-        public void GetToken_ForUnidentifiedGrantType_ShouldReturnResponseWithErrorMessage()
-        {
-            ITokenService service = CreateTokenService();
-            TokenRequest request = new TokenRequest
-            {
-                GrantType = GrantTypes.unidentified
-            };
-
-            TokenResponse response = service.GetToken(string.Empty, request);
-
-            response.Message.Should().NotBeEmpty();
-        }
-
-        [Fact]
-        public void GetToken_ForUnidentifiedGrantType_ShouldReturnResponseWithEmptyToken()
-        {
-            ITokenService service = CreateTokenService();
-            TokenRequest request = new TokenRequest
-            {
-                GrantType = GrantTypes.unidentified
-            };
-
-            TokenResponse response = service.GetToken(string.Empty, request);
-
-            response.Token.Value.Should().BeEmpty();
+            response.Should().BeFailure();
         }
 
         [Fact]
@@ -65,7 +36,7 @@ namespace ScuffedAuth.Tests
 
             TokenResponse response = service.GetToken(string.Empty, request);
 
-            response.Success.Should().BeFalse();
+            response.Should().BeFailure();
         }
 
         [Fact]
@@ -80,7 +51,7 @@ namespace ScuffedAuth.Tests
 
             TokenResponse response = service.GetToken(authorizationHeader, request);
 
-            response.Success.Should().BeTrue();
+            response.Should().BeSuccess();
         }
 
         [Fact]
@@ -95,7 +66,7 @@ namespace ScuffedAuth.Tests
 
             TokenResponse response = service.GetToken(authorizationHeader, request);
 
-            response.Success.Should().BeFalse();
+            response.Should().BeFailure();
         }
 
         [Theory]
@@ -110,7 +81,7 @@ namespace ScuffedAuth.Tests
 
             TokenResponse response = service.GetToken(incorrectHeader, request);
 
-            response.Success.Should().BeFalse();
+            response.Should().BeFailure();
         }
 
         private ITokenService CreateTokenService()
