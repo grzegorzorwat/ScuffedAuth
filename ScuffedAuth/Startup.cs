@@ -9,6 +9,7 @@ using ScuffedAuth.Authorization;
 using ScuffedAuth.Authorization.ClientCredentials;
 using ScuffedAuth.Authorization.TokenEndpoint;
 using Microsoft.Extensions.Options;
+using AutoMapper;
 
 namespace ScuffedAuth
 {
@@ -52,6 +53,8 @@ namespace ScuffedAuth
                         }
                     });
                 });
+
+            services.AddAutoMapper(typeof(Startup));
 
             services
                 .AddOptions<TokenGeneratorSettings>()

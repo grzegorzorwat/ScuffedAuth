@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using ScuffedAuth.Authorization.TokenEndpoint;
 using System.ComponentModel.DataAnnotations;
 
@@ -9,10 +10,12 @@ namespace ScuffedAuth.Controllers
     public class AuthorizationController : ControllerBase
     {
         private readonly ITokenService _tokenService;
+        private readonly IMapper _mapper;
 
-        public AuthorizationController(ITokenService tokenService)
+        public AuthorizationController(ITokenService tokenService, IMapper mapper)
         {
             _tokenService = tokenService;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -28,7 +31,8 @@ namespace ScuffedAuth.Controllers
                 return BadRequest(response.Message);
             }
 
-            return Ok(response.Token);
+            var resource = _mapper.Map<Token, TokenResource>(response.Token);
+            return Ok(resource);
         }
     }
 }
