@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using Microsoft.Extensions.Options;
+using NSubstitute;
 using ScuffedAuth.Authorization;
 using ScuffedAuth.Authorization.ClientCredentials;
 using ScuffedAuth.Authorization.TokenEndpoint;
@@ -94,9 +95,15 @@ namespace ScuffedAuth.Tests
             authenticator
                 .Authenticate(Arg.Any<string>(), Arg.Any<string>())
                 .Returns(args => (string)args[0] == "clientId" && (string)args[1] == "clientSecret");
+            var tokenGeneratorSettings = Options.Create(new TokenGeneratorSettings()
+            {
+                ExpiresIn = 60,
+                Length = 32,
+                TokenType = "Bearer"
+            });
             factory
                 .GetAuthorization(GrantTypes.client_credentials)
-                .Returns(new ClientCredentialsAuthorization(authenticator, new TokenGenerator(), new ClientCredentialsDecoder()));
+                .Returns(new ClientCredentialsAuthorization(authenticator, new TokenGenerator(tokenGeneratorSettings), new ClientCredentialsDecoder()));
             return new TokenService(factory);
         }
 

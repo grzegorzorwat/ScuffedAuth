@@ -8,6 +8,7 @@ using System;
 using ScuffedAuth.Authorization;
 using ScuffedAuth.Authorization.ClientCredentials;
 using ScuffedAuth.Authorization.TokenEndpoint;
+using Microsoft.Extensions.Options;
 
 namespace ScuffedAuth
 {
@@ -52,6 +53,10 @@ namespace ScuffedAuth
                     });
                 });
 
+            services
+                .AddOptions<TokenGeneratorSettings>()
+                .Bind(Configuration.GetSection("TokenGeneratorSettings"))
+                .ValidateDataAnnotations();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IClientCredentialsAuthenticator, ClientCredentialsAuthenticator>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
