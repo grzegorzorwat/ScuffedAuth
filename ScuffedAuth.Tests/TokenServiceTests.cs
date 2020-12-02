@@ -90,17 +90,13 @@ namespace ScuffedAuth.Tests
             factory
                 .GetAuthorization(GrantTypes.unidentified)
                 .Returns(new UnidentifiedAuthorization());
-            var tokenGenerator = Substitute.For<ITokenGenerator>();
-            tokenGenerator
-                .Generate()
-                .Returns(new Token("token"));
             var authenticator = Substitute.For<IClientCredentialsAuthenticator>();
             authenticator
                 .Authenticate(Arg.Any<string>(), Arg.Any<string>())
                 .Returns(args => (string)args[0] == "clientId" && (string)args[1] == "clientSecret");
             factory
                 .GetAuthorization(GrantTypes.client_credentials)
-                .Returns(new ClientCredentialsAuthorization(authenticator, tokenGenerator, new ClientCredentialsDecoder()));
+                .Returns(new ClientCredentialsAuthorization(authenticator, new TokenGenerator(), new ClientCredentialsDecoder()));
             return new TokenService(factory);
         }
 
