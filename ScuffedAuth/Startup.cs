@@ -10,6 +10,8 @@ using ScuffedAuth.Authorization.ClientCredentials;
 using ScuffedAuth.Authorization.TokenEndpoint;
 using Microsoft.Extensions.Options;
 using AutoMapper;
+using ScuffedAuth.Persistance;
+using Microsoft.EntityFrameworkCore;
 
 namespace ScuffedAuth
 {
@@ -55,7 +57,11 @@ namespace ScuffedAuth
                 });
 
             services.AddAutoMapper(typeof(Startup));
-
+            services
+                .AddDbContext<AppDbContext>(options =>
+                {
+                    options.UseInMemoryDatabase("scuffed-auth-in-memory");
+                });
             services
                 .AddOptions<TokenGeneratorSettings>()
                 .Bind(Configuration.GetSection("TokenGeneratorSettings"))
@@ -74,6 +80,7 @@ namespace ScuffedAuth
                     s => s.GetRequiredService<ClientCredentialsAuthorization>());
             services
                 .AddScoped<ClientCredentialsDecoder>();
+            services.AddScoped<IClientsRepository, ClientsRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

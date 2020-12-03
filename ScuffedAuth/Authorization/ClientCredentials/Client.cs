@@ -1,8 +1,8 @@
 ﻿namespace ScuffedAuth.Authorization.ClientCredentials
 {
-    public class ClientCredentialsModel
+    public class Client
     {
-        public ClientCredentialsModel(string id, string secret)
+        public Client(string id, string secret)
         {
             Id = id;
             Secret = secret;

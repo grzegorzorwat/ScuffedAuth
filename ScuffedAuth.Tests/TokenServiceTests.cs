@@ -6,6 +6,7 @@ using ScuffedAuth.Authorization.TokenEndpoint;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace ScuffedAuth.Tests
@@ -13,7 +14,7 @@ namespace ScuffedAuth.Tests
     public class TokenServiceTests
     {
         [Fact]
-        public void GetToken_ForUnidentifiedGrantType_ShouldReturnFailureResponse()
+        public async Task GetToken_ForUnidentifiedGrantType_ShouldReturnFailureResponse()
         {
             ITokenService service = CreateTokenService();
             TokenRequest request = new TokenRequest
@@ -21,13 +22,13 @@ namespace ScuffedAuth.Tests
                 GrantType = GrantTypes.unidentified
             };
 
-            TokenResponse response = service.GetToken(string.Empty, request);
+            TokenResponse response = await service.GetToken(string.Empty, request);
 
             response.Should().BeFailure();
         }
 
         [Fact]
-        public void GetToken_ForEmptyClientCredentialsHeader_ShouldReturnFailureResponse()
+        public async Task GetToken_ForEmptyClientCredentialsHeader_ShouldReturnFailureResponse()
         {
             ITokenService service = CreateTokenService();
             TokenRequest request = new TokenRequest
@@ -35,13 +36,13 @@ namespace ScuffedAuth.Tests
                 GrantType = GrantTypes.client_credentials
             };
 
-            TokenResponse response = service.GetToken(string.Empty, request);
+            TokenResponse response = await service.GetToken(string.Empty, request);
 
             response.Should().BeFailure();
         }
 
         [Fact]
-        public void GetToken_ForCorrectClientCredentials_ShouldReturnSuccessResponse()
+        public async Task GetToken_ForCorrectClientCredentials_ShouldReturnSuccessResponse()
         {
             ITokenService service = CreateTokenService();
             TokenRequest request = new TokenRequest
@@ -50,13 +51,13 @@ namespace ScuffedAuth.Tests
             };
             string authorizationHeader = CreateBasicHeader("clientId", "clientSecret");
 
-            TokenResponse response = service.GetToken(authorizationHeader, request);
+            TokenResponse response = await service.GetToken(authorizationHeader, request);
 
             response.Should().BeSuccess();
         }
 
         [Fact]
-        public void GetToken_ForIncorrectClientCredentials_ShouldReturnFailureResponse()
+        public async Task GetToken_ForIncorrectClientCredentials_ShouldReturnFailureResponse()
         {
             ITokenService service = CreateTokenService();
             TokenRequest request = new TokenRequest
@@ -65,14 +66,14 @@ namespace ScuffedAuth.Tests
             };
             string authorizationHeader = CreateBasicHeader("incorrectClientId", "incorrectClientSecret");
 
-            TokenResponse response = service.GetToken(authorizationHeader, request);
+            TokenResponse response = await service.GetToken(authorizationHeader, request);
 
             response.Should().BeFailure();
         }
 
         [Theory]
         [MemberData(nameof(GetIncorrectHeaders))]
-        public void GetToken_ForIncorrectClientCredentialsHeaders_ShouldReturnFailureResponse(string testCase, string incorrectHeader)
+        public async Task GetToken_ForIncorrectClientCredentialsHeaders_ShouldReturnFailureResponse(string testCase, string incorrectHeader)
         {
             ITokenService service = CreateTokenService();
             TokenRequest request = new TokenRequest
@@ -80,7 +81,7 @@ namespace ScuffedAuth.Tests
                 GrantType = GrantTypes.client_credentials
             };
 
-            TokenResponse response = service.GetToken(incorrectHeader, request);
+            TokenResponse response = await service.GetToken(incorrectHeader, request);
 
             response.Should().BeFailure();
         }

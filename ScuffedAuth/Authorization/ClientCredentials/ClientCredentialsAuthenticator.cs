@@ -1,11 +1,26 @@
-﻿namespace ScuffedAuth.Authorization.ClientCredentials
+﻿using System.Threading.Tasks;
+
+namespace ScuffedAuth.Authorization.ClientCredentials
 {
     public class ClientCredentialsAuthenticator : IClientCredentialsAuthenticator
     {
-        public bool Authenticate(string clientId, string clientSecret)
+        private readonly IClientsRepository _clientsRepository;
+
+        public ClientCredentialsAuthenticator(IClientsRepository clientsRepository)
         {
-            return clientId == "clientId"
-                   && clientSecret == "clientSecret";
+            _clientsRepository = clientsRepository;
+        }
+
+        public async Task<bool> Authenticate(string clientId, string clientSecret)
+        {
+            var client = await _clientsRepository.GetClientByIdAsync(clientId);
+
+            if(client == null)
+            {
+                return false;
+            }
+
+            return clientSecret == client.Secret;
         }
     }
 }

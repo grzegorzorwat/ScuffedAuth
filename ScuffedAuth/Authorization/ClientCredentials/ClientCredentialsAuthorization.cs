@@ -1,4 +1,5 @@
 ﻿using ScuffedAuth.Authorization.TokenEndpoint;
+using System.Threading.Tasks;
 
 namespace ScuffedAuth.Authorization.ClientCredentials
 {
@@ -17,9 +18,11 @@ namespace ScuffedAuth.Authorization.ClientCredentials
             _decoder = decoder;
         }
 
-        public TokenResponse GetToken(string authorizationHeader)
+        public async Task<TokenResponse> GetToken(string authorizationHeader)
         {
-            if (!Authorize(authorizationHeader))
+            bool isAuthorized = await Authorize(authorizationHeader);
+
+            if (!isAuthorized)
             {
                 return new TokenResponse("Invalid credentials");
             }
@@ -27,14 +30,14 @@ namespace ScuffedAuth.Authorization.ClientCredentials
             return new TokenResponse(_tokenGenerator.Generate());
         }
 
-        private bool Authorize(string authorizationHeader)
+        private async Task<bool> Authorize(string authorizationHeader)
         {
             if (!_decoder.TryDecode(authorizationHeader, out var credentials))
             {
                 return false;
             }
 
-            return _authenticator.Authenticate(credentials.Id, credentials.Secret);
+            return await _authenticator.Authenticate(credentials.Id, credentials.Secret);
         }
     }
 }

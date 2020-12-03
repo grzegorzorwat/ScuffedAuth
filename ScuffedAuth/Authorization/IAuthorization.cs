@@ -1,9 +1,10 @@
 ﻿using ScuffedAuth.Authorization.TokenEndpoint;
+using System.Threading.Tasks;
 
 namespace ScuffedAuth.Authorization
 {
     public interface IAuthorization
     {
-        TokenResponse GetToken(string authorizationHeader);
+        Task<TokenResponse> GetToken(string authorizationHeader);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace ScuffedAuth.Authorization.TokenEndpoint
+﻿using System.Threading.Tasks;
+
+namespace ScuffedAuth.Authorization.TokenEndpoint
 {
     public class TokenService : ITokenService
     {
@@ -9,10 +11,10 @@
             _authorizationFactory = authorizationFactory;
         }
 
-        public TokenResponse GetToken(string authorizationHeader, TokenRequest request)
+        public async Task<TokenResponse> GetToken(string authorizationHeader, TokenRequest request)
         {
             var authorization = _authorizationFactory.GetAuthorization(request.GrantType);
-            return authorization.GetToken(authorizationHeader);
+            return await authorization.GetToken(authorizationHeader);
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿namespace ScuffedAuth.Authorization.ClientCredentials
+﻿using System.Threading.Tasks;
+
+namespace ScuffedAuth.Authorization.ClientCredentials
 {
     public interface IClientCredentialsAuthenticator
     {
-        bool Authenticate(string clientId, string clientSecret);
+        Task<bool> Authenticate(string clientId, string clientSecret);
     }
 }
