@@ -5,10 +5,13 @@ namespace ScuffedAuth.Authorization.ClientCredentials
     public class ClientCredentialsAuthenticator : IClientCredentialsAuthenticator
     {
         private readonly IClientsRepository _clientsRepository;
+        private readonly ISecretVerifier _secretVerifier;
 
-        public ClientCredentialsAuthenticator(IClientsRepository clientsRepository)
+        public ClientCredentialsAuthenticator(IClientsRepository clientsRepository,
+            ISecretVerifier secretVerifier)
         {
             _clientsRepository = clientsRepository;
+            _secretVerifier = secretVerifier;
         }
 
         public async Task<bool> Authenticate(string clientId, string clientSecret)
@@ -20,7 +23,7 @@ namespace ScuffedAuth.Authorization.ClientCredentials
                 return false;
             }
 
-            return clientSecret == client.Secret;
+            return _secretVerifier.Verify(client.Secret, clientSecret);
         }
     }
 }

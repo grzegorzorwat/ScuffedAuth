@@ -81,6 +81,7 @@ namespace ScuffedAuth
             services
                 .AddScoped<ClientCredentialsDecoder>();
             services.AddScoped<IClientsRepository, ClientsRepository>();
+            services.AddScoped<ISecretVerifier, SecretVerifier>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
