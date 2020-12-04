@@ -13,6 +13,10 @@ namespace ScuffedAuth.Tests
 {
     public class TokenServiceTests
     {
+        private const string ClientId = "clientId";
+        private const string ClientSecret = "clientSecret";
+        private const string EncodedClientSecret = "1000.39zyePe+fstN7VVEitrNyg==.fDCT8OLtWjHKhotdLb43EJm0jBehkp6J45NGyMvFYAw=";
+
         [Fact]
         public async Task GetToken_ForUnidentifiedGrantType_ShouldReturnFailureResponse()
         {
@@ -49,7 +53,7 @@ namespace ScuffedAuth.Tests
             {
                 GrantType = GrantTypes.client_credentials
             };
-            string authorizationHeader = CreateBasicHeader("clientId", "clientSecret");
+            string authorizationHeader = CreateBasicHeader(ClientId, ClientSecret);
 
             TokenResponse response = await service.GetToken(authorizationHeader, request);
 
@@ -92,19 +96,23 @@ namespace ScuffedAuth.Tests
             factory
                 .GetAuthorization(GrantTypes.unidentified)
                 .Returns(new UnidentifiedAuthorization());
-            var authenticator = Substitute.For<IClientCredentialsAuthenticator>();
-            authenticator
-                .Authenticate(Arg.Any<string>(), Arg.Any<string>())
-                .Returns(args => (string)args[0] == "clientId" && (string)args[1] == "clientSecret");
-            var tokenGeneratorSettings = Options.Create(new TokenGeneratorSettings()
-            {
-                ExpiresIn = 60,
-                Length = 32,
-                TokenType = "Bearer"
-            });
+            var clientsRepository = Substitute.For<IClientsRepository>();
+            clientsRepository
+                .GetClientByIdAsync(ClientId)
+                .Returns(new Client(ClientId, EncodedClientSecret));
+            var authenticator = new ClientCredentialsAuthenticator(clientsRepository, new SecretVerifier());
+            var tokenGeneratorSettings =
+                Options.Create(new TokenGeneratorSettings()
+                {
+                    ExpiresIn = 60,
+                    Length = 32,
+                    TokenType = "Bearer"
+                });
             factory
                 .GetAuthorization(GrantTypes.client_credentials)
-                .Returns(new ClientCredentialsAuthorization(authenticator, new TokenGenerator(tokenGeneratorSettings), new ClientCredentialsDecoder()));
+                .Returns(new ClientCredentialsAuthorization(authenticator,
+                new TokenGenerator(tokenGeneratorSettings),
+                new ClientCredentialsDecoder()));
             return new TokenService(factory);
         }
 
