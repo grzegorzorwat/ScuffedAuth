@@ -1,10 +1,13 @@
-﻿using Microsoft.Extensions.Options;
+﻿using FluentAssertions;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 using ScuffedAuth.Authorization;
 using ScuffedAuth.Authorization.ClientCredentials;
 using ScuffedAuth.Authorization.TokenEndpoint;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -104,7 +107,140 @@ namespace ScuffedAuth.Tests
             response.Should().BeFailure();
         }
 
-        private ITokenService CreateTokenService()
+        [Theory]
+        [InlineData(60)]
+        [InlineData(3600)]
+        public async Task GetToken_ForProvidedExpiresInSetting_ShouldReturnTokenWithCorrectExpiresInValue(int expiresIn)
+        {
+            var settings = new TokenGeneratorSettings
+            {
+                ExpiresIn = expiresIn,
+                Length = 32,
+                TokenType = "Bearer"
+            };
+            ITokenService service = CreateTokenService(settings);
+            TokenRequest request = new TokenRequest
+            {
+                GrantType = GrantTypes.client_credentials
+            };
+            string authorizationHeader = GetCorrectClientsCredentialBasicHeader();
+
+            TokenResponse response = await service.GetToken(authorizationHeader, request);
+
+            response.Token.ExpiresIn.Should().Be(expiresIn);
+        }
+
+        [Theory]
+        [InlineData(2)]
+        [InlineData(4)]
+        [InlineData(32)]
+        public async Task GetToken_ForProvidedEvenLengthSetting_ShouldReturnTokenWithCorrectExactLength(int length)
+        {
+            var settings = new TokenGeneratorSettings
+            {
+                ExpiresIn = 60,
+                Length = length,
+                TokenType = "Bearer"
+            };
+            ITokenService service = CreateTokenService(settings);
+            TokenRequest request = new TokenRequest
+            {
+                GrantType = GrantTypes.client_credentials
+            };
+            string authorizationHeader = GetCorrectClientsCredentialBasicHeader();
+
+            TokenResponse response = await service.GetToken(authorizationHeader, request);
+
+            response.Token.Value.Length.Should().Be(length);
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void TokenGeneratorSettings_ForLengthLessOrEqualToOne_ShouldReturnValidationError(int length)
+        {
+            var settings = new TokenGeneratorSettings
+            {
+                ExpiresIn = 60,
+                Length = length,
+                TokenType = "Bearer"
+            };
+
+            var validationModel = ValidateModel(settings);
+
+            validationModel.Should().Contain(
+                x => x.MemberNames.Contains("Length")
+                    && !string.IsNullOrEmpty(x.ErrorMessage)
+                    && x.ErrorMessage.Contains("between"));
+        }
+
+        private List<ValidationResult> ValidateModel(object model)
+        {
+            var validationResults = new List<ValidationResult>();
+            var ctx = new ValidationContext(model, null, null);
+            Validator.TryValidateObject(model, ctx, validationResults, true);
+            return validationResults;
+        }
+
+        [Theory]
+        [InlineData(3, 2)]
+        [InlineData(5, 4)]
+        [InlineData(31, 30)]
+        public async Task GetToken_ForProvidedOddLengthSetting_ShouldReturnTokenWithCorrectRoundedDownToEvenLength(int length, int expectedLength)
+        {
+            var settings = new TokenGeneratorSettings
+            {
+                ExpiresIn = 60,
+                Length = length,
+                TokenType = "Bearer"
+            };
+            ITokenService service = CreateTokenService(settings);
+            TokenRequest request = new TokenRequest
+            {
+                GrantType = GrantTypes.client_credentials
+            };
+            string authorizationHeader = GetCorrectClientsCredentialBasicHeader();
+
+            TokenResponse response = await service.GetToken(authorizationHeader, request);
+
+            response.Token.Value.Length.Should().Be(expectedLength);
+        }
+
+        [Theory]
+        [InlineData("Bearer")]
+        [InlineData("OtherTokenType")]
+        public async Task GetToken_ForProvidedTokenTypeSetting_ShouldReturnTokenWithCorrectTokenType(string tokenType)
+        {
+            var settings = new TokenGeneratorSettings
+            {
+                ExpiresIn = 60,
+                Length = 32,
+                TokenType = tokenType
+            };
+            ITokenService service = CreateTokenService(settings);
+            TokenRequest request = new TokenRequest
+            {
+                GrantType = GrantTypes.client_credentials
+            };
+            string authorizationHeader = GetCorrectClientsCredentialBasicHeader();
+
+            TokenResponse response = await service.GetToken(authorizationHeader, request);
+
+            response.Token.TokenType.Should().Be(tokenType);
+        }
+
+        private static ITokenService CreateTokenService()
+        {
+            return CreateTokenService(new TokenGeneratorSettings()
+            {
+                ExpiresIn = 60,
+                Length = 32,
+                TokenType = "Bearer"
+            });
+        }
+
+        private static ITokenService CreateTokenService(TokenGeneratorSettings pSettings)
         {
             var factory = Substitute.For<AuthorizationFactory>();
             factory
@@ -116,17 +252,12 @@ namespace ScuffedAuth.Tests
                 .Returns(new Client(ClientId, EncodedClientSecret));
             var authenticator = new ClientCredentialsAuthenticator(clientsRepository, new SecretVerifier());
             var tokenGeneratorSettings =
-                Options.Create(new TokenGeneratorSettings()
-                {
-                    ExpiresIn = 60,
-                    Length = 32,
-                    TokenType = "Bearer"
-                });
+                Options.Create(pSettings);
             factory
                 .GetAuthorization(GrantTypes.client_credentials)
                 .Returns(new ClientCredentialsAuthorization(authenticator,
-                new TokenGenerator(tokenGeneratorSettings),
-                new ClientCredentialsDecoder()));
+        new TokenGenerator(tokenGeneratorSettings),
+                    new ClientCredentialsDecoder()));
             return new TokenService(factory);
         }
 
