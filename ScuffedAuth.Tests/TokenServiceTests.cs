@@ -46,6 +46,21 @@ namespace ScuffedAuth.Tests
         }
 
         [Fact]
+        public async Task GetToken_ForUnidentifiedGrantTypeWithCorrectCredentials_ShouldReturnFailureResponse()
+        {
+            ITokenService service = CreateTokenService();
+            TokenRequest request = new TokenRequest
+            {
+                GrantType = GrantTypes.unidentified
+            };
+            string authorizationHeader = GetCorrectClientsCredentialBasicHeader();
+
+            TokenResponse response = await service.GetToken(authorizationHeader, request);
+
+            response.Should().BeFailure();
+        }
+
+        [Fact]
         public async Task GetToken_ForCorrectClientCredentials_ShouldReturnSuccessResponse()
         {
             ITokenService service = CreateTokenService();
@@ -53,13 +68,12 @@ namespace ScuffedAuth.Tests
             {
                 GrantType = GrantTypes.client_credentials
             };
-            string authorizationHeader = CreateBasicHeader(ClientId, ClientSecret);
+            string authorizationHeader = GetCorrectClientsCredentialBasicHeader();
 
             TokenResponse response = await service.GetToken(authorizationHeader, request);
 
             response.Should().BeSuccess();
         }
-
         [Fact]
         public async Task GetToken_ForIncorrectClientCredentials_ShouldReturnFailureResponse()
         {
@@ -114,6 +128,11 @@ namespace ScuffedAuth.Tests
                 new TokenGenerator(tokenGeneratorSettings),
                 new ClientCredentialsDecoder()));
             return new TokenService(factory);
+        }
+
+        private static string GetCorrectClientsCredentialBasicHeader()
+        {
+            return CreateBasicHeader(ClientId, ClientSecret);
         }
 
         public static IEnumerable<object[]> GetIncorrectHeaders
