@@ -94,7 +94,7 @@ namespace ScuffedAuth.Tests
 
         [Theory]
         [MemberData(nameof(GetIncorrectHeaders))]
-        public async Task GetToken_ForIncorrectClientCredentialsHeaders_ShouldReturnFailureResponse(string testCase, string incorrectHeader)
+        public async Task GetToken_ForIncorrectClientCredentialsHeaders_ShouldReturnFailureResponse(string because, string incorrectHeader)
         {
             ITokenService service = CreateTokenService();
             TokenRequest request = new TokenRequest
@@ -104,7 +104,7 @@ namespace ScuffedAuth.Tests
 
             TokenResponse response = await service.GetToken(incorrectHeader, request);
 
-            response.Should().BeFailure();
+            response.Should().BeFailure(because + " was passed");
         }
 
         [Theory]
@@ -272,12 +272,12 @@ namespace ScuffedAuth.Tests
             {
                 return new List<object[]>
                 {
-                    new object[] {"NotEncodedHeader", "Basic clientId:clientSecret"},
-                    new object[] {"NotBasicHeader", Encode("clientId:clientSecret")},
-                    new object[] {"BearerHeader", $"Bearer {Encode("clientId:clientSecret")}"},
-                    new object[] {"HeaderWithMultipleColons", $"Basic {Encode("clientId:clientSecret:")}"},
-                    new object[] {"HeaderWithEmptyClientId", $"Basic {Encode(":clientSecret")}"},
-                    new object[] {"HeaderWithEmptyClientSecret", $"Basic {Encode("clientId:")}"}
+                    new object[] {"not encoded header", "Basic clientId:clientSecret"},
+                    new object[] {"not basic header", Encode("clientId:clientSecret")},
+                    new object[] {"bearer header", $"Bearer {Encode("clientId:clientSecret")}"},
+                    new object[] {"header with multiple colons", $"Basic {Encode("clientId:clientSecret:")}"},
+                    new object[] {"header with empty clientId", $"Basic {Encode(":clientSecret")}"},
+                    new object[] {"header with empty clientSecret", $"Basic {Encode("clientId:")}"}
                 };
             }
         }

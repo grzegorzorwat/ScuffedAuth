@@ -19,11 +19,11 @@ namespace ScuffedAuth.Tests
                 .HasTokenValue();
         }
 
-        public TokenResponseAssert BeFailure()
+        public TokenResponseAssert BeFailure(string because = "")
         {
-            return HasFailureStatus()
-                .HasErrorMessage()
-                .HasEmptyTokenValue();
+            return HasFailureStatus(because)
+                .HasErrorMessage(because)
+                .HasEmptyTokenValue(because);
         }
 
         public TokenResponseAssert HasSuccessStatus()
@@ -44,21 +44,21 @@ namespace ScuffedAuth.Tests
             return this;
         }
 
-        public TokenResponseAssert HasFailureStatus()
+        public TokenResponseAssert HasFailureStatus(string because = "")
         {
-            _tokenResponse.Success.Should().BeFalse();
+            _tokenResponse.Success.Should().BeFalse(because);
             return this;
         }
 
-        public TokenResponseAssert HasErrorMessage()
+        public TokenResponseAssert HasErrorMessage(string because = "")
         {
-            _tokenResponse.Message.Should().NotBeEmpty();
+            _tokenResponse.Message.Should().NotBeEmpty(because);
             return this;
         }
 
-        public TokenResponseAssert HasEmptyTokenValue()
+        public TokenResponseAssert HasEmptyTokenValue(string because = "")
         {
-            _tokenResponse.Token.Value.Should().BeEmpty();
+            _tokenResponse.Token.Value.Should().BeEmpty(because);
             return this;
         }
     }
