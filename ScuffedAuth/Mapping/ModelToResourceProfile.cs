@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ScuffedAuth.Authorization.IntrospectionEnpoint;
 using ScuffedAuth.Authorization.TokenEndpoint;
 
 namespace ScuffedAuth.Mapping
@@ -9,6 +10,7 @@ namespace ScuffedAuth.Mapping
         {
             CreateMap<Token, TokenResource>()
                 .ForMember(dest => dest.AccessToken, opt => opt.MapFrom(src => src.Value));
+            CreateMap<TokenInfo, TokenInfoResource>();
         }
     }
 }

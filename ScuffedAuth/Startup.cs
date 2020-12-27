@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using AutoMapper;
 using ScuffedAuth.Persistance;
 using Microsoft.EntityFrameworkCore;
+using ScuffedAuth.Authorization.IntrospectionEnpoint;
 
 namespace ScuffedAuth
 {
@@ -82,6 +83,9 @@ namespace ScuffedAuth
                 .AddScoped<ClientCredentialsDecoder>();
             services.AddScoped<IClientsRepository, ClientsRepository>();
             services.AddScoped<ISecretVerifier, SecretVerifier>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ITokenRepository, TokenRepository>();
+            services.AddScoped<IIntrospectionService, IntrospectionService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

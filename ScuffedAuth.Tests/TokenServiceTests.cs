@@ -4,6 +4,7 @@ using NSubstitute;
 using ScuffedAuth.Authorization;
 using ScuffedAuth.Authorization.ClientCredentials;
 using ScuffedAuth.Authorization.TokenEndpoint;
+using ScuffedAuth.Persistance;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -258,7 +259,9 @@ namespace ScuffedAuth.Tests
                 .Returns(new ClientCredentialsAuthorization(authenticator,
         new TokenGenerator(tokenGeneratorSettings),
                     new ClientCredentialsDecoder()));
-            return new TokenService(factory);
+            var tokenRepository = Substitute.For<ITokenRepository>();
+            var unitOfWork = Substitute.For<IUnitOfWork>();
+            return new TokenService(factory, tokenRepository, unitOfWork);
         }
 
         private static string GetCorrectClientsCredentialBasicHeader()
