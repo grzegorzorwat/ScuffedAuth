@@ -1,7 +1,10 @@
-﻿namespace ScuffedAuth.Authorization.IntrospectionEnpoint
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ScuffedAuth.Authorization.IntrospectionEnpoint
 {
     public class IntrospectionRequest
     {
-        public string Token { get; set; }
+        [Required]
+        public string Token { get; set; } = default!;
     }
 }

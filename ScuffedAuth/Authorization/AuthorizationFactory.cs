@@ -6,7 +6,7 @@ namespace ScuffedAuth.Authorization
 {
     public class AuthorizationFactory
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceProvider _serviceProvider = default!;
 
         protected AuthorizationFactory() {}
 

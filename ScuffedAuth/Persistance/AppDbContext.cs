@@ -6,8 +6,8 @@ namespace ScuffedAuth.Persistance
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<Client> Clients { get; set; }
-        public DbSet<Token> Tokens { get; set; }
+        public DbSet<Client> Clients { get; set; } = default!;
+        public DbSet<Token> Tokens { get; set; } = default!;
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
