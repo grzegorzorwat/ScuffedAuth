@@ -176,7 +176,7 @@ namespace ScuffedAuth.Tests
                     && x.ErrorMessage.Contains("between"));
         }
 
-        private List<ValidationResult> ValidateModel(object model)
+        private static List<ValidationResult> ValidateModel(object model)
         {
             var validationResults = new List<ValidationResult>();
             var ctx = new ValidationContext(model, null, null);
