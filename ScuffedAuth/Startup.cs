@@ -4,6 +4,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
+using ScuffedAuth.Authorization;
+using ScuffedAuth.Authorization.ClientCredentials;
+using ScuffedAuth.Authorization.TokenEndpoint;
+using Microsoft.Extensions.Options;
+using AutoMapper;
+using ScuffedAuth.Persistance;
+using Microsoft.EntityFrameworkCore;
+using ScuffedAuth.Authorization.IntrospectionEnpoint;
 
 namespace ScuffedAuth
 {
@@ -18,12 +27,65 @@ namespace ScuffedAuth
 
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ScuffedAuth", Version = "v1" });
-            });
+            services
+                .AddSwaggerGen(c =>
+                {
+                    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ScuffedAuth", Version = "v1" });
+                    c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
+                    {
+                        Name = "Authorization",
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "basic",
+                        In = ParameterLocation.Header,
+                        Description = "Basic Authorization header using the Bearer scheme."
+                    });
+
+                    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "basic"
+                                }
+                            },
+                            Array.Empty<string>()
+                        }
+                    });
+                });
+
+            services.AddAutoMapper(typeof(Startup));
+            services
+                .AddDbContext<AppDbContext>(options =>
+                {
+                    options.UseInMemoryDatabase("scuffed-auth-in-memory");
+                });
+            services
+                .AddOptions<TokenGeneratorSettings>()
+                .Bind(Configuration.GetSection("TokenGeneratorSettings"))
+                .ValidateDataAnnotations();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IClientCredentialsAuthenticator, ClientCredentialsAuthenticator>();
+            services.AddScoped<ITokenGenerator, TokenGenerator>();
+            services.AddScoped<AuthorizationFactory>();
+            services
+                .AddScoped<UnidentifiedAuthorization>()
+                .AddScoped<IAuthorization, UnidentifiedAuthorization>(
+                    s => s.GetRequiredService<UnidentifiedAuthorization>());
+            services
+                .AddScoped<ClientCredentialsAuthorization>()
+                .AddScoped<IAuthorization, ClientCredentialsAuthorization>(
+                    s => s.GetRequiredService<ClientCredentialsAuthorization>());
+            services
+                .AddScoped<ClientCredentialsDecoder>();
+            services.AddScoped<IClientsRepository, ClientsRepository>();
+            services.AddScoped<ISecretVerifier, SecretVerifier>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ITokenRepository, TokenRepository>();
+            services.AddScoped<IIntrospectionService, IntrospectionService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -37,10 +99,11 @@ namespace ScuffedAuth
 
             app.UseRouting();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app
+                .UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                });
         }
     }
 }
