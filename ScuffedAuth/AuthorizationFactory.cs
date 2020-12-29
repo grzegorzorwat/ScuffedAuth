@@ -19,7 +19,7 @@ namespace Authorization
         {
             return grantType switch
             {
-                GrantTypes.client_credentials => (IAuthorization)_serviceProvider.GetRequiredService(typeof(ClientCredentialsAuthorization)),
+                GrantTypes.client_credentials => _serviceProvider.GetClientCredentialsAuthorization(),
                 _ => (IAuthorization)_serviceProvider.GetRequiredService(typeof(UnidentifiedAuthorization))
             };
         }

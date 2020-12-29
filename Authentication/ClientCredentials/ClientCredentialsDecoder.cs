@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Authentication.ClientCredentials
 {
-    public class ClientCredentialsDecoder
+    internal class ClientCredentialsDecoder
     {
         private const string BasicHeaderPrefix = "Basic ";
 

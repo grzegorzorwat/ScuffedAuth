@@ -1,6 +1,6 @@
 ﻿namespace Authentication.ClientCredentials
 {
-    public interface ISecretVerifier
+    internal interface ISecretVerifier
     {
         bool Verify(string hash, string secret);
     }

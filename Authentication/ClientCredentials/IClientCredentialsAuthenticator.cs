@@ -2,7 +2,7 @@
 
 namespace Authentication.ClientCredentials
 {
-    public interface IClientCredentialsAuthenticator
+    internal interface IClientCredentialsAuthenticator
     {
         Task<bool> Authenticate(string clientId, string clientSecret);
     }

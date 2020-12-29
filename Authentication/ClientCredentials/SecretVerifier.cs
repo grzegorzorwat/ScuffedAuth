@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 
 namespace Authentication.ClientCredentials
 {
-    public class SecretVerifier : ISecretVerifier
+    internal class SecretVerifier : ISecretVerifier
     {
         private const int KeySize = 32;
 

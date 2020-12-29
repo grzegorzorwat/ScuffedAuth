@@ -68,24 +68,17 @@ namespace ScuffedAuth
                 .Bind(Configuration.GetSection("TokenGeneratorSettings"))
                 .ValidateDataAnnotations();
             services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IClientCredentialsAuthenticator, ClientCredentialsAuthenticator>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IAuthorizationFactory, AuthorizationFactory>();
             services
                 .AddScoped<UnidentifiedAuthorization>()
                 .AddScoped<IAuthorization, UnidentifiedAuthorization>(
                     s => s.GetRequiredService<UnidentifiedAuthorization>());
-            services
-                .AddScoped<ClientCredentialsAuthorization>()
-                .AddScoped<IAuthorization, ClientCredentialsAuthorization>(
-                    s => s.GetRequiredService<ClientCredentialsAuthorization>());
-            services
-                .AddScoped<ClientCredentialsDecoder>();
             services.AddScoped<IClientsRepository, ClientsRepository>();
-            services.AddScoped<ISecretVerifier, SecretVerifier>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITokenRepository, TokenRepository>();
             services.AddScoped<IIntrospectionService, IntrospectionService>();
+            services.AddClientCredentials();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

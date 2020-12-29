@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Authentication.ClientCredentials
 {
-    public class ClientCredentialsAuthorization : IAuthorization
+    internal class ClientCredentialsAuthorization : IAuthorization
     {
         private readonly ITokenGenerator _tokenGenerator;
         private readonly IClientCredentialsAuthenticator _authenticator;

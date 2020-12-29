@@ -2,7 +2,7 @@
 
 namespace Authentication.ClientCredentials
 {
-    public class ClientCredentialsAuthenticator : IClientCredentialsAuthenticator
+    internal class ClientCredentialsAuthenticator : IClientCredentialsAuthenticator
     {
         private readonly IClientsRepository _clientsRepository;
         private readonly ISecretVerifier _secretVerifier;
