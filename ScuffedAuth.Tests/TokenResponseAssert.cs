@@ -1,5 +1,5 @@
-﻿using FluentAssertions;
-using ScuffedAuth.Authorization.TokenEndpoint;
+﻿using Authorization.TokenEndpoint;
+using FluentAssertions;
 
 namespace ScuffedAuth.Tests
 {

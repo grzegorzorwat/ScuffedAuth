@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ScuffedAuth.Authorization.ClientCredentials;
-using ScuffedAuth.Authorization.TokenEndpoint;
+﻿using Authentication.ClientCredentials;
+using Authorization.TokenEndpoint;
+using Microsoft.EntityFrameworkCore;
 
 namespace ScuffedAuth.Persistance
 {

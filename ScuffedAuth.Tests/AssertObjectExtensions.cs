@@ -1,4 +1,4 @@
-﻿using ScuffedAuth.Authorization.TokenEndpoint;
+﻿using Authorization.TokenEndpoint;
 
 namespace ScuffedAuth.Tests
 {

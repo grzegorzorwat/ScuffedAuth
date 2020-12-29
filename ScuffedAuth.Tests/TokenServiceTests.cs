@@ -1,10 +1,9 @@
-﻿using FluentAssertions;
+﻿using Authentication.ClientCredentials;
+using Authorization;
+using Authorization.TokenEndpoint;
+using FluentAssertions;
 using Microsoft.Extensions.Options;
 using NSubstitute;
-using ScuffedAuth.Authorization;
-using ScuffedAuth.Authorization.ClientCredentials;
-using ScuffedAuth.Authorization.TokenEndpoint;
-using ScuffedAuth.Persistance;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

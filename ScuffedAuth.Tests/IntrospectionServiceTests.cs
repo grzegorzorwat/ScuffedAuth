@@ -1,7 +1,7 @@
-﻿using FluentAssertions;
+﻿using Authorization.IntrospectionEnpoint;
+using Authorization.TokenEndpoint;
+using FluentAssertions;
 using NSubstitute;
-using ScuffedAuth.Authorization.IntrospectionEnpoint;
-using ScuffedAuth.Authorization.TokenEndpoint;
 using System;
 using System.Threading.Tasks;
 using Xunit;

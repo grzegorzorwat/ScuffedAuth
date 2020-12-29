@@ -5,14 +5,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
-using ScuffedAuth.Authorization;
-using ScuffedAuth.Authorization.ClientCredentials;
-using ScuffedAuth.Authorization.TokenEndpoint;
 using Microsoft.Extensions.Options;
 using AutoMapper;
 using ScuffedAuth.Persistance;
 using Microsoft.EntityFrameworkCore;
-using ScuffedAuth.Authorization.IntrospectionEnpoint;
+using Authorization.TokenEndpoint;
+using Authentication.ClientCredentials;
+using Authorization;
+using Authorization.IntrospectionEnpoint;
 
 namespace ScuffedAuth
 {
@@ -70,7 +70,7 @@ namespace ScuffedAuth
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IClientCredentialsAuthenticator, ClientCredentialsAuthenticator>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
-            services.AddScoped<AuthorizationFactory>();
+            services.AddScoped<IAuthorizationFactory, AuthorizationFactory>();
             services
                 .AddScoped<UnidentifiedAuthorization>()
                 .AddScoped<IAuthorization, UnidentifiedAuthorization>(

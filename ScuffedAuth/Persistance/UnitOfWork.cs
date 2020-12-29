@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Authorization;
+using System.Threading.Tasks;
 
 namespace ScuffedAuth.Persistance
 {

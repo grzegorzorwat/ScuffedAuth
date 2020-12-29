@@ -1,7 +1,7 @@
-﻿using AutoMapper;
+﻿using Authorization.IntrospectionEnpoint;
+using Authorization.TokenEndpoint;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using ScuffedAuth.Authorization.IntrospectionEnpoint;
-using ScuffedAuth.Authorization.TokenEndpoint;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
