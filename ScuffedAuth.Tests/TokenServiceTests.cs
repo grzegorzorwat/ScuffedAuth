@@ -256,11 +256,10 @@ namespace ScuffedAuth.Tests
             factory
                 .GetAuthorization(GrantTypes.client_credentials)
                 .Returns(new ClientCredentialsAuthorization(authenticator,
-        new TokenGenerator(tokenGeneratorSettings),
                     new ClientCredentialsDecoder()));
             var tokenRepository = Substitute.For<ITokenRepository>();
             var unitOfWork = Substitute.For<IUnitOfWork>();
-            return new TokenService(factory, tokenRepository, unitOfWork);
+            return new TokenService(factory, tokenRepository, unitOfWork, new TokenGenerator(tokenGeneratorSettings));
         }
 
         private static string GetCorrectClientsCredentialBasicHeader()

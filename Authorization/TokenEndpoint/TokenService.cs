@@ -7,14 +7,17 @@ namespace Authorization.TokenEndpoint
         private readonly IAuthorizationFactory _authorizationFactory;
         private readonly ITokenRepository _tokenRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ITokenGenerator _tokenGenerator;
 
         public TokenService(IAuthorizationFactory authorizationFactory,
             ITokenRepository tokenRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ITokenGenerator tokenGenerator)
         {
             _authorizationFactory = authorizationFactory;
             _tokenRepository = tokenRepository;
             _unitOfWork = unitOfWork;
+            _tokenGenerator = tokenGenerator;
         }
 
         public async Task<TokenResponse> GetToken(string authorizationHeader, TokenRequest request)
@@ -22,15 +25,17 @@ namespace Authorization.TokenEndpoint
             try
             {
                 var authorization = _authorizationFactory.GetAuthorization(request.GrantType);
-                var tokenResponse = await authorization.GetToken(authorizationHeader);
+                var isAuthorized = await authorization.Authorize(authorizationHeader);
 
-                if (tokenResponse.Success)
+                if (isAuthorized)
                 {
-                    await _tokenRepository.AddToken(tokenResponse.Token);
+                    var token = _tokenGenerator.Generate();
+                    await _tokenRepository.AddToken(token);
                     await _unitOfWork.Complete();
+                    return new TokenResponse(token);
                 }
 
-                return tokenResponse;
+                return new TokenResponse("Invalid credentials");
             }
             catch
             {

@@ -5,6 +5,6 @@ namespace Authorization
 {
     public interface IAuthorization
     {
-        Task<TokenResponse> GetToken(string authorizationHeader);
+        Task<bool> Authorize(string authorizationHeader);
     }
 }
