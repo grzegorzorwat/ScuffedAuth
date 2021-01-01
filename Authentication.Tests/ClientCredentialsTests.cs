@@ -51,7 +51,7 @@ namespace Authentication.Tests
         }
 
         [Theory]
-        [ClassData(typeof(IncorrectHeaders))]
+        [ClassData(typeof(IncorrectBasicHeaders))]
         public async Task ShouldReturnFailureResponseForIncorrectHeaders(string because, string incorrectHeader)
         {
             IClientsRepository clientsRepository = Substitute.For<IClientsRepository>();
