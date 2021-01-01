@@ -4,33 +4,27 @@ namespace Authorization.TokenEndpoint
 {
     public class TokenService : ITokenService
     {
-        private readonly IAuthorizationFactory _authorizationFactory;
         private readonly ITokenRepository _tokenRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ITokenGenerator _tokenGenerator;
 
-        public TokenService(IAuthorizationFactory authorizationFactory,
-            ITokenRepository tokenRepository,
-            IUnitOfWork unitOfWork)
+        public TokenService(ITokenRepository tokenRepository,
+            IUnitOfWork unitOfWork,
+            ITokenGenerator tokenGenerator)
         {
-            _authorizationFactory = authorizationFactory;
             _tokenRepository = tokenRepository;
             _unitOfWork = unitOfWork;
+            _tokenGenerator = tokenGenerator;
         }
 
-        public async Task<TokenResponse> GetToken(string authorizationHeader, TokenRequest request)
+        public async Task<TokenResponse> GetToken(TokenRequest request)
         {
             try
             {
-                var authorization = _authorizationFactory.GetAuthorization(request.GrantType);
-                var tokenResponse = await authorization.GetToken(authorizationHeader);
-
-                if (tokenResponse.Success)
-                {
-                    await _tokenRepository.AddToken(tokenResponse.Token);
-                    await _unitOfWork.Complete();
-                }
-
-                return tokenResponse;
+                var token = _tokenGenerator.Generate();
+                await _tokenRepository.AddToken(token);
+                await _unitOfWork.Complete();
+                return new TokenResponse(token);
             }
             catch
             {

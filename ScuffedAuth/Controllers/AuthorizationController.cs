@@ -1,8 +1,9 @@
 ﻿using Authorization.IntrospectionEnpoint;
 using Authorization.TokenEndpoint;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
+using ScuffedAuth.Authentication;
 using System.Threading.Tasks;
 
 namespace ScuffedAuth.Controllers
@@ -28,9 +29,10 @@ namespace ScuffedAuth.Controllers
         [Route("token")]
         [Consumes("application/x-www-form-urlencoded")]
         [Produces("application/json")]
-        public async Task<ActionResult> Token([FromHeader, Required] string authorization, [FromQuery] TokenRequest tokenRequest)
+        [Authorize(AuthenticationSchemes = AuthenticationSchemeConstants.GrantTypesAuthenticationScheme)]
+        public async Task<ActionResult> Token([FromQuery] TokenRequest tokenRequest)
         {
-            var response = await _tokenService.GetToken(authorization, tokenRequest);
+            var response = await _tokenService.GetToken(tokenRequest);
 
             if (!response.Success)
             {

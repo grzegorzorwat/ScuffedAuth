@@ -13,6 +13,9 @@ using Authorization.TokenEndpoint;
 using Authentication.ClientCredentials;
 using Authorization;
 using Authorization.IntrospectionEnpoint;
+using Microsoft.AspNetCore.Authorization;
+using Authentication;
+using ScuffedAuth.Authentication;
 
 namespace ScuffedAuth
 {
@@ -69,16 +72,19 @@ namespace ScuffedAuth
                 .ValidateDataAnnotations();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
-            services.AddScoped<IAuthorizationFactory, AuthorizationFactory>();
-            services
-                .AddScoped<UnidentifiedAuthorization>()
-                .AddScoped<IAuthorization, UnidentifiedAuthorization>(
-                    s => s.GetRequiredService<UnidentifiedAuthorization>());
             services.AddScoped<IClientsRepository, ClientsRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITokenRepository, TokenRepository>();
             services.AddScoped<IIntrospectionService, IntrospectionService>();
-            services.AddClientCredentials();
+            ServicesConfiguration.AddAuthentication(services);
+            services.AddHttpContextAccessor();
+            services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultScheme = AuthenticationSchemeConstants.GrantTypesAuthenticationScheme;
+                })
+                .AddScheme<GrantTypesAuthenticationSchemeOptions, GrantTypesAuthenticationHandler>(
+                    AuthenticationSchemeConstants.GrantTypesAuthenticationScheme, op => { });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -91,7 +97,8 @@ namespace ScuffedAuth
             }
 
             app.UseRouting();
-
+            app.UseAuthentication();
+            app.UseAuthorization();
             app
                 .UseEndpoints(endpoints =>
                 {

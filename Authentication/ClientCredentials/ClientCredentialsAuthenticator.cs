@@ -2,28 +2,37 @@
 
 namespace Authentication.ClientCredentials
 {
-    internal class ClientCredentialsAuthenticator : IClientCredentialsAuthenticator
+    internal class ClientCredentialsAuthenticator : IAuthenticator
     {
+        private readonly ClientCredentialsDecoder _decoder;
         private readonly IClientsRepository _clientsRepository;
         private readonly ISecretVerifier _secretVerifier;
 
-        public ClientCredentialsAuthenticator(IClientsRepository clientsRepository,
+        public ClientCredentialsAuthenticator(ClientCredentialsDecoder decoder,
+            IClientsRepository clientsRepository,
             ISecretVerifier secretVerifier)
         {
+            _decoder = decoder;
             _clientsRepository = clientsRepository;
             _secretVerifier = secretVerifier;
         }
 
-        public async Task<bool> Authenticate(string clientId, string clientSecret)
+        public async Task<AuthenticationResponse> Authenticate(string authorizationHeader)
         {
-            var client = await _clientsRepository.GetClientByIdAsync(clientId);
-
-            if (client == null)
+            if (_decoder.TryDecode(authorizationHeader, out var credentials))
             {
-                return false;
+                var client = await _clientsRepository.GetClientByIdAsync(credentials.Id);
+
+                if (client is not null)
+                {
+                    if (_secretVerifier.Verify(client.Secret, credentials.Secret))
+                    {
+                        return new AuthenticationResponse(credentials);
+                    }
+                }
             }
 
-            return _secretVerifier.Verify(client.Secret, clientSecret);
+            return new AuthenticationResponse("Invalid credentials");
         }
     }
 }

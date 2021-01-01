@@ -4,6 +4,6 @@ namespace Authorization.TokenEndpoint
 {
     public interface ITokenService
     {
-        Task<TokenResponse> GetToken(string authorizationHeader, TokenRequest request);
+        Task<TokenResponse> GetToken(TokenRequest request);
     }
 }
