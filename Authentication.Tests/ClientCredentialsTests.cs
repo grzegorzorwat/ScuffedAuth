@@ -1,8 +1,5 @@
 ﻿using Authentication.ClientCredentials;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -10,10 +7,6 @@ namespace Authentication.Tests
 {
     public class ClientCredentialsTests
     {
-        private const string ClientId = "clientId";
-        private const string ClientSecret = "clientSecret";
-        private const string EncodedClientSecret = "1000.39zyePe+fstN7VVEitrNyg==.fDCT8OLtWjHKhotdLb43EJm0jBehkp6J45NGyMvFYAw=";
-
         [Fact]
         public async Task ShouldReturnFailureResponseForEmptyHeader()
         {
@@ -28,9 +21,9 @@ namespace Authentication.Tests
         public async Task ShouldReturnSuccessResponseForCorrectCredentials()
         {
             IAuthenticator authenticator = GetClientCredentailsAuthenticator();
-            string authorizationHeader = GetCorrectClientsCredentialBasicHeader();
+            string header = TestHeaders.GetCorrectClientsCredentialsBasicHeader();
 
-            AuthenticationResponse response = await authenticator.Authenticate(authorizationHeader);
+            AuthenticationResponse response = await authenticator.Authenticate(header);
 
             response.Should().BeSuccess();
         }
@@ -39,15 +32,26 @@ namespace Authentication.Tests
         public async Task ShouldReturnFailureResponseForIncorrectCredentials()
         {
             IAuthenticator authenticator = GetClientCredentailsAuthenticator();
-            string authorizationHeader = CreateBasicHeader("incorrectClientId", "incorrectClientSecret");
+            string header = TestHeaders.CreateBasicHeader("incorrectClientId", "incorrectClientSecret");
 
-            AuthenticationResponse response = await authenticator.Authenticate(authorizationHeader);
+            AuthenticationResponse response = await authenticator.Authenticate(header);
+
+            response.Should().BeFailure();
+        }
+
+        [Fact]
+        public async Task ShouldReturnFailureResponseForExistingClientWithIncorrectSecretPassed()
+        {
+            IAuthenticator authenticator = GetClientCredentailsAuthenticator();
+            string header = TestHeaders.CreateBasicHeader(TestHeaders.ClientId, "incorrectClientSecret");
+
+            AuthenticationResponse response = await authenticator.Authenticate(header);
 
             response.Should().BeFailure();
         }
 
         [Theory]
-        [MemberData(nameof(GetIncorrectHeaders))]
+        [ClassData(typeof(IncorrectHeaders))]
         public async Task ShouldReturnFailureResponseForIncorrectHeaders(string because, string incorrectHeader)
         {
             IClientsRepository clientsRepository = Substitute.For<IClientsRepository>();
@@ -64,43 +68,11 @@ namespace Authentication.Tests
         {
             IClientsRepository clientsRepository = Substitute.For<IClientsRepository>();
             clientsRepository
-                .GetClientByIdAsync(ClientId)
-                .Returns(new Client(ClientId, EncodedClientSecret));
+                .GetClientByIdAsync(TestHeaders.ClientId)
+                .Returns(new Client(TestHeaders.ClientId, TestHeaders.EncodedClientSecret));
             return new ClientCredentialsAuthenticator(new ClientCredentialsDecoder(),
                 clientsRepository,
                 new SecretVerifier());
-        }
-
-        private static string GetCorrectClientsCredentialBasicHeader()
-        {
-            return CreateBasicHeader(ClientId, ClientSecret);
-        }
-
-        private static string CreateBasicHeader(string clientId, string clientSecret)
-        {
-            string encoded = Encode($"{clientId}:{clientSecret}");
-            return $"Basic {encoded}";
-        }
-
-        private static string Encode(string source)
-        {
-            return Convert.ToBase64String(Encoding.ASCII.GetBytes(source));
-        }
-
-        public static IEnumerable<object[]> GetIncorrectHeaders
-        {
-            get
-            {
-                return new List<object[]>
-                {
-                    new object[] {"not encoded header", "Basic clientId:clientSecret"},
-                    new object[] {"not basic header", Encode("clientId:clientSecret")},
-                    new object[] {"bearer header", $"Bearer {Encode("clientId:clientSecret")}"},
-                    new object[] {"header with multiple colons", $"Basic {Encode("clientId:clientSecret:")}"},
-                    new object[] {"header with empty clientId", $"Basic {Encode(":clientSecret")}"},
-                    new object[] {"header with empty clientSecret", $"Basic {Encode("clientId:")}"}
-                };
-            }
         }
     }
 }
