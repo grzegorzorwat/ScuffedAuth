@@ -7,13 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScuffedAuth", "ScuffedAuth\
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{061C166C-485F-4FD7-A890-F308CE993CE1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScuffedAuth.Tests", "ScuffedAuth.Tests\ScuffedAuth.Tests.csproj", "{35286502-1F0E-48B5-85DE-D6E2D275DA07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authentication", "Authentication\Authentication.csproj", "{320A7190-C29B-4889-A40C-85421BAC79E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication", "Authentication\Authentication.csproj", "{320A7190-C29B-4889-A40C-85421BAC79E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authorization", "Authorization\Authorization.csproj", "{597902A5-30EE-4D15-8F31-8332DDC6FAE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authorization", "Authorization\Authorization.csproj", "{597902A5-30EE-4D15-8F31-8332DDC6FAE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authentication.Tests", "Authentication.Tests\Authentication.Tests.csproj", "{1F74453B-1115-4754-A29C-C24902A82894}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication.Tests", "Authentication.Tests\Authentication.Tests.csproj", "{1F74453B-1115-4754-A29C-C24902A82894}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authorization.Tests", "Authorization.Tests\Authorization.Tests.csproj", "{135C8448-1DEA-4505-B297-61C08A45AEAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,6 @@ Global
 		{061C166C-485F-4FD7-A890-F308CE993CE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{061C166C-485F-4FD7-A890-F308CE993CE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{061C166C-485F-4FD7-A890-F308CE993CE1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{35286502-1F0E-48B5-85DE-D6E2D275DA07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{35286502-1F0E-48B5-85DE-D6E2D275DA07}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{35286502-1F0E-48B5-85DE-D6E2D275DA07}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{35286502-1F0E-48B5-85DE-D6E2D275DA07}.Release|Any CPU.Build.0 = Release|Any CPU
 		{320A7190-C29B-4889-A40C-85421BAC79E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{320A7190-C29B-4889-A40C-85421BAC79E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{320A7190-C29B-4889-A40C-85421BAC79E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,6 +41,10 @@ Global
 		{1F74453B-1115-4754-A29C-C24902A82894}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F74453B-1115-4754-A29C-C24902A82894}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F74453B-1115-4754-A29C-C24902A82894}.Release|Any CPU.Build.0 = Release|Any CPU
+		{135C8448-1DEA-4505-B297-61C08A45AEAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{135C8448-1DEA-4505-B297-61C08A45AEAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{135C8448-1DEA-4505-B297-61C08A45AEAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{135C8448-1DEA-4505-B297-61C08A45AEAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
