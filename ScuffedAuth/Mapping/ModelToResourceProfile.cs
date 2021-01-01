@@ -1,6 +1,6 @@
-﻿using AutoMapper;
-using ScuffedAuth.Authorization.IntrospectionEnpoint;
-using ScuffedAuth.Authorization.TokenEndpoint;
+﻿using Authorization.IntrospectionEnpoint;
+using Authorization.TokenEndpoint;
+using AutoMapper;
 
 namespace ScuffedAuth.Mapping
 {

@@ -5,14 +5,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
-using ScuffedAuth.Authorization;
-using ScuffedAuth.Authorization.ClientCredentials;
-using ScuffedAuth.Authorization.TokenEndpoint;
 using Microsoft.Extensions.Options;
 using AutoMapper;
 using ScuffedAuth.Persistance;
 using Microsoft.EntityFrameworkCore;
-using ScuffedAuth.Authorization.IntrospectionEnpoint;
+using Authorization.TokenEndpoint;
+using Authentication.ClientCredentials;
+using Authorization;
+using Authorization.IntrospectionEnpoint;
+using Microsoft.AspNetCore.Authorization;
+using Authentication;
+using ScuffedAuth.Authentication;
 
 namespace ScuffedAuth
 {
@@ -68,24 +71,20 @@ namespace ScuffedAuth
                 .Bind(Configuration.GetSection("TokenGeneratorSettings"))
                 .ValidateDataAnnotations();
             services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IClientCredentialsAuthenticator, ClientCredentialsAuthenticator>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
-            services.AddScoped<AuthorizationFactory>();
-            services
-                .AddScoped<UnidentifiedAuthorization>()
-                .AddScoped<IAuthorization, UnidentifiedAuthorization>(
-                    s => s.GetRequiredService<UnidentifiedAuthorization>());
-            services
-                .AddScoped<ClientCredentialsAuthorization>()
-                .AddScoped<IAuthorization, ClientCredentialsAuthorization>(
-                    s => s.GetRequiredService<ClientCredentialsAuthorization>());
-            services
-                .AddScoped<ClientCredentialsDecoder>();
             services.AddScoped<IClientsRepository, ClientsRepository>();
-            services.AddScoped<ISecretVerifier, SecretVerifier>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITokenRepository, TokenRepository>();
             services.AddScoped<IIntrospectionService, IntrospectionService>();
+            ServicesConfiguration.AddAuthentication(services);
+            services.AddHttpContextAccessor();
+            services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultScheme = AuthenticationSchemeConstants.GrantTypesAuthenticationScheme;
+                })
+                .AddScheme<GrantTypesAuthenticationSchemeOptions, GrantTypesAuthenticationHandler>(
+                    AuthenticationSchemeConstants.GrantTypesAuthenticationScheme, op => { });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -98,7 +97,8 @@ namespace ScuffedAuth
             }
 
             app.UseRouting();
-
+            app.UseAuthentication();
+            app.UseAuthorization();
             app
                 .UseEndpoints(endpoints =>
                 {
