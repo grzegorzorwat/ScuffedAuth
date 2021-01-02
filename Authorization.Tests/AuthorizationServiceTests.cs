@@ -1,6 +1,5 @@
 ﻿using Authentication.ClientCredentials;
 using Authorization.AuthorizationEndpoint;
-using FluentAssertions;
 using NSubstitute;
 using System.Threading.Tasks;
 using Xunit;
@@ -20,7 +19,7 @@ namespace Authorization.Tests
 
             AuthorizationResponse response = await service.Authorize(request);
 
-            response.Success.Should().BeFalse();
+            response.Should().BeFailure().WithMessage("unsupported_response_type");
         }
 
         [Fact]
@@ -34,7 +33,7 @@ namespace Authorization.Tests
 
             AuthorizationResponse response = await service.Authorize(request);
 
-            response.Success.Should().BeFalse();
+            response.Should().BeFailure().WithMessage("unauthorized_client");
         }
 
         [Fact]
@@ -45,10 +44,10 @@ namespace Authorization.Tests
 
             AuthorizationResponse response = await service.Authorize(request);
 
-            response.Success.Should().BeTrue();
+            response.Should().BeSuccess();
         }
 
-        private AuthorizationService GetAuthorizationService()
+        private static AuthorizationService GetAuthorizationService()
         {
             IClientsRepository clientsRepository = Substitute.For<IClientsRepository>();
             clientsRepository.GetClientByIdAsync("ClientId").Returns(new Client("ClientId", "ClientSecret"));

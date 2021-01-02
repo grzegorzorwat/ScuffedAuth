@@ -1,66 +1,39 @@
 ﻿using Authentication.Tests;
 using FluentAssertions;
+using Tests.Library;
 
 namespace Authentication.Tests
 {
-    public class AuthenticationResponseAssert
+    public class AuthenticationResponseAssert : BaseResponseAssert
     {
         private readonly AuthenticationResponse _response;
 
-        public AuthenticationResponseAssert(AuthenticationResponse response)
+        public AuthenticationResponseAssert(AuthenticationResponse response) : base(response)
         {
             _response = response;
         }
 
-        public AuthenticationResponseAssert BeSuccess()
+        public override BaseResponseAssert HasPayloadForSuccessReponse(string because = "")
         {
-            return HasSuccessStatus()
-                .HasEmptyErrorMessage()
-                .HasClientId()
-                .HasClientSecret();
+            return HasClientId(because)
+                .HasClientSecret(because);
         }
 
-        public AuthenticationResponseAssert BeFailure(string because = "")
+        public override BaseResponseAssert HasPayloadForFailureResponse(string because = "")
         {
-            return HasFailureStatus(because)
-                .HasErrorMessage(because)
-                .HasEmptyClientId(because)
-                .HasEmptyClientSecret();
+            return HasEmptyClientId(because)
+                .HasEmptyClientSecret(because);
         }
 
-        public AuthenticationResponseAssert HasSuccessStatus()
+        public AuthenticationResponseAssert HasClientId(string because = "")
         {
-            _response.Success.Should().BeTrue();
+            _response.Client.Id.Should().NotBeEmpty(because);
             return this;
         }
 
-        public AuthenticationResponseAssert HasEmptyErrorMessage()
+        public AuthenticationResponseAssert HasClientSecret(string because = "")
         {
-            _response.Message.Should().BeEmpty();
-            return this;
-        }
-
-        public AuthenticationResponseAssert HasClientId()
-        {
-            _response.Client.Id.Should().NotBeEmpty();
-            return this;
-        }
-
-        public AuthenticationResponseAssert HasClientSecret()
-        {
-            _response.Client.Secret.Should().NotBeEmpty();
-            return this;
-        }
-
-        public AuthenticationResponseAssert HasFailureStatus(string because = "")
-        {
-            _response.Success.Should().BeFalse(because);
-            return this;
-        }
-
-        public AuthenticationResponseAssert HasErrorMessage(string because = "")
-        {
-            _response.Message.Should().NotBeEmpty(because);
+            _response.Client.Secret.Should().NotBeEmpty(because);
             return this;
         }
 
