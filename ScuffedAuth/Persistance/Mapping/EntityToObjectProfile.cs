@@ -1,7 +1,8 @@
-﻿using Authentication.ClientCredentials;
-using Authorization.TokenEndpoint;
+﻿using Authorization.TokenEndpoint;
 using AutoMapper;
 using ScuffedAuth.Persistance.Entities;
+using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
+using ClientCredentials = Authentication.ClientCredentials;
 
 namespace ScuffedAuth.Persistance.Mapping
 {
@@ -9,7 +10,8 @@ namespace ScuffedAuth.Persistance.Mapping
     {
         public EntityToObjectProfile()
         {
-            CreateMap<ClientEntity, Client>();
+            CreateMap<ClientEntity, ClientCredentials.Client>();
+            CreateMap<ClientEntity, AuthorizationEndpoint.Client>();
             CreateMap<TokenEntity, Token>();
         }
     }

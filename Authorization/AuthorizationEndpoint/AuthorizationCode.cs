@@ -1,21 +1,20 @@
-﻿using Authentication.ClientCredentials;
-using System;
+﻿using System;
 
 namespace Authorization.AuthorizationEndpoint
 {
     public class AuthorizationCode
     {
-        public AuthorizationCode(string code, Client client, DateTime creationDate, int expiresIn)
+        public AuthorizationCode(string code, string clientId, DateTime creationDate, int expiresIn)
         {
             Code = code;
-            Client = client;
+            ClientId = clientId;
             CreationDate = creationDate;
             ExpiresIn = expiresIn;
         }
 
         public string Code { get; init; }
 
-        public Client Client { get; init; }
+        public string ClientId { get; init; }
 
         public DateTime CreationDate { get; init; }
 

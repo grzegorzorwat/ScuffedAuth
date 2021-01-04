@@ -1,4 +1,5 @@
-﻿using Authorization.IntrospectionEnpoint;
+﻿using Authorization.AuthorizationEndpoint;
+using Authorization.IntrospectionEnpoint;
 using Authorization.TokenEndpoint;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -15,14 +16,17 @@ namespace ScuffedAuth.Controllers
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
         private readonly IIntrospectionService _introspectionService;
+        private readonly Authorization.AuthorizationEndpoint.IAuthorizationService _authorizationService;
 
         public AuthorizationController(ITokenService tokenService,
             IMapper mapper,
-            IIntrospectionService introspectionService)
+            IIntrospectionService introspectionService,
+            Authorization.AuthorizationEndpoint.IAuthorizationService authorizationService)
         {
             _tokenService = tokenService;
             _mapper = mapper;
             _introspectionService = introspectionService;
+            _authorizationService = authorizationService;
         }
 
         [HttpPost]
@@ -57,6 +61,22 @@ namespace ScuffedAuth.Controllers
             }
 
             var resource = _mapper.Map<TokenInfo, TokenInfoResource>(response.TokenInfo);
+            return Ok(resource);
+        }
+
+        [HttpGet]
+        [Route("authorize")]
+        [Consumes("application/x-www-form-urlencoded")]
+        public async Task<ActionResult> Authorize([FromQuery] AuthorizationRequest authorizationRequest)
+        {
+            var response = await _authorizationService.Authorize(authorizationRequest);
+
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }
+
+            var resource = _mapper.Map<AuthorizationCode, AuthorizationCodeResource>(response.AuthorizationCode);
             return Ok(resource);
         }
     }

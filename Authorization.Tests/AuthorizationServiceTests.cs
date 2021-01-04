@@ -1,6 +1,6 @@
-﻿using Authentication.ClientCredentials;
-using Authorization.AuthorizationEndpoint;
+﻿using Authorization.AuthorizationEndpoint;
 using NSubstitute;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -49,9 +49,11 @@ namespace Authorization.Tests
 
         private static AuthorizationService GetAuthorizationService()
         {
-            IClientsRepository clientsRepository = Substitute.For<IClientsRepository>();
-            clientsRepository.GetClientByIdAsync("ClientId").Returns(new Client("ClientId", "ClientSecret"));
-            return new AuthorizationService(clientsRepository, new AuthorizationCodeGenerator());
+            IAuthorizationCodesRepository repository = Substitute.For<IAuthorizationCodesRepository>();
+            repository.GetClientByIdAsync("ClientId").Returns(new Client("ClientId"));
+            return new AuthorizationService(new AuthorizationCodeGenerator(),
+                repository,
+                Substitute.For<IUnitOfWork>());
         }
 
         private class TestAuthorizationRequestBuilder
@@ -61,7 +63,11 @@ namespace Authorization.Tests
 
             public AuthorizationRequest Build()
             {
-                return new AuthorizationRequest(ResponseType, ClientId);
+                return new AuthorizationRequest
+                {
+                    ResponseType = ResponseType,
+                    ClientId = ClientId
+                };
             }
         }
     }

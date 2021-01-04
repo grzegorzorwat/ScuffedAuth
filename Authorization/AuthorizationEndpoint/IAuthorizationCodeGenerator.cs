@@ -1,9 +1,7 @@
-﻿using Authentication.ClientCredentials;
-
-namespace Authorization.AuthorizationEndpoint
+﻿namespace Authorization.AuthorizationEndpoint
 {
-    internal interface IAuthorizationCodeGenerator
+    public interface IAuthorizationCodeGenerator
     {
-        AuthorizationCode Generate(Client client);
+        AuthorizationCode Generate(string clientId);
     }
 }

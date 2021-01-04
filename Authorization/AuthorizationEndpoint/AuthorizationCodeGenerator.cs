@@ -3,11 +3,11 @@ using System;
 
 namespace Authorization.AuthorizationEndpoint
 {
-    internal class AuthorizationCodeGenerator : IAuthorizationCodeGenerator
+    public class AuthorizationCodeGenerator : IAuthorizationCodeGenerator
     {
-        public AuthorizationCode Generate(Client client)
+        public AuthorizationCode Generate(string clientId)
         {
-            return new AuthorizationCode("code", client, DateTime.UtcNow, 60);
+            return new AuthorizationCode("code", clientId, DateTime.UtcNow, 60);
         }
     }
 }

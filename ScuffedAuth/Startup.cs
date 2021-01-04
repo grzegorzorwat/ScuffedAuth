@@ -1,21 +1,20 @@
+using Authentication;
+using Authentication.ClientCredentials;
+using Authorization;
+using Authorization.AuthorizationEndpoint;
+using Authorization.IntrospectionEnpoint;
+using Authorization.TokenEndpoint;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using System;
-using Microsoft.Extensions.Options;
-using AutoMapper;
-using ScuffedAuth.Persistance;
-using Microsoft.EntityFrameworkCore;
-using Authorization.TokenEndpoint;
-using Authentication.ClientCredentials;
-using Authorization;
-using Authorization.IntrospectionEnpoint;
-using Microsoft.AspNetCore.Authorization;
-using Authentication;
 using ScuffedAuth.Authentication;
+using ScuffedAuth.Persistance;
+using System;
 
 namespace ScuffedAuth
 {
@@ -76,6 +75,10 @@ namespace ScuffedAuth
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITokenRepository, TokenRepository>();
             services.AddScoped<IIntrospectionService, IntrospectionService>();
+            services.AddScoped<Authorization.AuthorizationEndpoint.IAuthorizationService, AuthorizationService>();
+            services.AddScoped<IAuthorizationCodesRepository, AuthorizationCodesRepository>();
+            services.AddScoped<IAuthorizationCodeGenerator, AuthorizationCodeGenerator>();
+
             ServicesConfiguration.AddAuthentication(services);
             services.AddHttpContextAccessor();
             services

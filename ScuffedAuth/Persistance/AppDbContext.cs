@@ -1,7 +1,6 @@
-﻿using Authentication.ClientCredentials;
-using Authorization.TokenEndpoint;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ScuffedAuth.Persistance.Entities;
+using System.Collections.Generic;
 
 namespace ScuffedAuth.Persistance
 {
@@ -9,6 +8,7 @@ namespace ScuffedAuth.Persistance
     {
         public DbSet<ClientEntity> Clients { get; set; } = default!;
         public DbSet<TokenEntity> Tokens { get; set; } = default!;
+        public DbSet<AuthorizationCodeEntity> AuthorizationCodes { get; set; } = default!;
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -44,6 +44,12 @@ namespace ScuffedAuth.Persistance
             builder.Entity<TokenEntity>().Property(p => p.ExpiresIn).IsRequired();
             builder.Entity<TokenEntity>().Property(p => p.TokenType).IsRequired().HasMaxLength(100);
 
+            builder.Entity<AuthorizationCodeEntity>().ToTable("AuthorizationCodes");
+            builder.Entity<AuthorizationCodeEntity>().HasKey(p => p.Code);
+            builder.Entity<AuthorizationCodeEntity>().Property(p => p.Code).IsRequired().HasMaxLength(32);
+            builder.Entity<AuthorizationCodeEntity>().Property(p => p.CreationDate).IsRequired();
+            builder.Entity<AuthorizationCodeEntity>().Property(p => p.ExpiresIn).IsRequired();
+            builder.Entity<AuthorizationCodeEntity>().Property(p => p.ClientId).IsRequired().HasMaxLength(32);
         }
     }
 }
