@@ -7,12 +7,7 @@ namespace ScuffedAuth.Persistance
 {
     public class AuthorizationCodesRepository : BaseRepository, IAuthorizationCodesRepository
     {
-        private readonly IMapper _mapper;
-
-        public AuthorizationCodesRepository(AppDbContext context, IMapper mapper) : base(context)
-        {
-            _mapper = mapper;
-        }
+        public AuthorizationCodesRepository(AppDbContext context, IMapper mapper) : base(context, mapper) { }
 
         public async Task AddAuthorizationCode(AuthorizationCode authorizationCode)
         {

@@ -7,12 +7,7 @@ namespace ScuffedAuth.Persistance
 {
     public class TokenRepository : BaseRepository, ITokenRepository
     {
-        private readonly IMapper _mapper;
-
-        public TokenRepository(AppDbContext context, IMapper mapper) : base(context)
-        {
-            _mapper = mapper;
-        }
+        public TokenRepository(AppDbContext context, IMapper mapper) : base(context, mapper) { }
 
         public async Task<Token> GetToken(string token)
         {

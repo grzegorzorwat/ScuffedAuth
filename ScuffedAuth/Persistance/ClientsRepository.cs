@@ -7,12 +7,7 @@ namespace ScuffedAuth.Persistance
 {
     public class ClientsRepository : BaseRepository, IClientsRepository
     {
-        private readonly IMapper _mapper;
-
-        public ClientsRepository(AppDbContext context, IMapper mapper) : base(context)
-        {
-            _mapper = mapper;
-        }
+        public ClientsRepository(AppDbContext context, IMapper mapper) : base(context, mapper) { }
 
         public async Task<Client> GetClientByIdAsync(string id)
         {
