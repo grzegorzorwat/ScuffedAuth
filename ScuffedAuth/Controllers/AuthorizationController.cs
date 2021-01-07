@@ -1,11 +1,12 @@
 ﻿using Authorization.AuthorizationEndpoint;
 using Authorization.IntrospectionEnpoint;
-using Authorization.TokenEndpoint;
+using TokenEndpoint = Authorization.TokenEndpoint;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ScuffedAuth.Authentication;
 using System.Threading.Tasks;
+using ScuffedAuth.Requests;
 
 namespace ScuffedAuth.Controllers
 {
@@ -13,12 +14,12 @@ namespace ScuffedAuth.Controllers
     [Route("oauth")]
     public class AuthorizationController : ControllerBase
     {
-        private readonly ITokenService _tokenService;
+        private readonly TokenEndpoint.ITokenService _tokenService;
         private readonly IMapper _mapper;
         private readonly IIntrospectionService _introspectionService;
         private readonly Authorization.AuthorizationEndpoint.IAuthorizationService _authorizationService;
 
-        public AuthorizationController(ITokenService tokenService,
+        public AuthorizationController(TokenEndpoint.ITokenService tokenService,
             IMapper mapper,
             IIntrospectionService introspectionService,
             Authorization.AuthorizationEndpoint.IAuthorizationService authorizationService)
@@ -36,14 +37,15 @@ namespace ScuffedAuth.Controllers
         [Authorize(AuthenticationSchemes = AuthenticationSchemeConstants.GrantTypesAuthenticationScheme)]
         public async Task<ActionResult> Token([FromQuery] TokenRequest tokenRequest)
         {
-            var response = await _tokenService.GetToken(tokenRequest);
+            var mappedRequest = _mapper.Map<TokenRequest, TokenEndpoint.TokenRequest>(tokenRequest);
+            var response = await _tokenService.GetToken(mappedRequest);
 
             if (!response.Success)
             {
                 return BadRequest(response.Message);
             }
 
-            var resource = _mapper.Map<Token, TokenResource>(response.Token);
+            var resource = _mapper.Map<TokenEndpoint.Token, TokenEndpoint.TokenResource>(response.Token);
             return Ok(resource);
         }
 
