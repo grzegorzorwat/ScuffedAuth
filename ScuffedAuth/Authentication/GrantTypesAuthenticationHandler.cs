@@ -71,9 +71,9 @@ namespace ScuffedAuth.Authentication
             var httpContext = _httpContextAccessor.HttpContext;
 
             if (httpContext is not null
-                && httpContext.Request.Query.ContainsKey(nameof(TokenRequest.GrantType)))
+                && httpContext.Request.Query.ContainsKey("grant_type"))
             {
-                if (Enum.TryParse(httpContext.Request.Query[nameof(TokenRequest.GrantType)], out GrantTypes grantType))
+                if (Enum.TryParse(httpContext.Request.Query["grant_type"], out GrantTypes grantType))
                 {
                     return grantType;
                 }
