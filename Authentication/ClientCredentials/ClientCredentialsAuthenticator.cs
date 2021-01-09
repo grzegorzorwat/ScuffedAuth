@@ -27,7 +27,7 @@ namespace Authentication.ClientCredentials
                 {
                     if (_secretVerifier.Verify(client.Secret, credentials.Secret))
                     {
-                        return new AuthenticationResponse(credentials);
+                        return new AuthenticationResponse(new ResponseClient(client.Id));
                     }
                 }
             }
