@@ -1,6 +1,5 @@
 ﻿using Authentication;
 using Authorization;
-using Authorization.TokenEndpoint;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -39,23 +38,20 @@ namespace ScuffedAuth.Authentication
                 {
                     var grantType = GetGrantType();
                     var authorization = _authenticationFactory.GetAuthentication(grantType);
+                    var response = await authorization.Authenticate(httpContext.Request.Headers[HeaderNames.Authorization],
+                        httpContext.Request.QueryString.Value ?? string.Empty);
 
-                    if (httpContext.Request.Headers.TryGetValue(HeaderNames.Authorization, out var header))
+                    if (response.Success)
                     {
-                        var response = await authorization.Authenticate(header);
-
-                        if (response.Success)
+                        var claims = new[]
                         {
-                            var claims = new[]
-                            {
                                 new Claim(ClaimTypes.NameIdentifier, response.Client.Id)
-                            };
-                            var claimsIdentity = new ClaimsIdentity(claims, nameof(GrantTypesAuthenticationHandler));
-                            return AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(claimsIdentity), Scheme.Name));
-                        }
-
-                        return AuthenticateResult.Fail(response.Message);
+                        };
+                        var claimsIdentity = new ClaimsIdentity(claims, nameof(GrantTypesAuthenticationHandler));
+                        return AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(claimsIdentity), Scheme.Name));
                     }
+
+                    return AuthenticateResult.Fail(response.Message);
                 }
 
                 return AuthenticateResult.Fail("Failed to authenticate.");

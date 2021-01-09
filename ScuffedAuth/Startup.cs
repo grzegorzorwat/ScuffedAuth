@@ -1,7 +1,6 @@
 using Authentication;
 using Authentication.ClientCredentials;
 using Authorization;
-using Authorization.AuthorizationEndpoint;
 using Authorization.IntrospectionEnpoint;
 using Authorization.TokenEndpoint;
 using AutoMapper;
@@ -15,6 +14,8 @@ using Microsoft.OpenApi.Models;
 using ScuffedAuth.Authentication;
 using ScuffedAuth.Persistance;
 using System;
+using AuthorizationCode = Authentication.AuthorizationCode;
+using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
 
 namespace ScuffedAuth
 {
@@ -75,9 +76,10 @@ namespace ScuffedAuth
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITokenRepository, TokenRepository>();
             services.AddScoped<IIntrospectionService, IntrospectionService>();
-            services.AddScoped<Authorization.AuthorizationEndpoint.IAuthorizationService, AuthorizationService>();
-            services.AddScoped<IAuthorizationCodesRepository, AuthorizationCodesRepository>();
-            services.AddScoped<IAuthorizationCodeGenerator, AuthorizationCodeGenerator>();
+            services.AddScoped<AuthorizationEndpoint.IAuthorizationService, AuthorizationEndpoint.AuthorizationService>();
+            services.AddScoped<AuthorizationEndpoint.IAuthorizationCodesRepository, AuthorizationCodesRepository>();
+            services.AddScoped<AuthorizationEndpoint.IAuthorizationCodeGenerator, AuthorizationEndpoint.AuthorizationCodeGenerator>();
+            services.AddScoped<AuthorizationCode.IAuthorizationCodesRepository, AuthorizationCodesRepository>();
 
             ServicesConfiguration.AddAuthentication(services);
             services.AddHttpContextAccessor();

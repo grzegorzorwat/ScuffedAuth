@@ -1,4 +1,5 @@
-﻿using Authentication.ClientCredentials;
+﻿using Authentication.AuthorizationCode;
+using Authentication.ClientCredentials;
 using Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -21,6 +22,7 @@ namespace Authentication
             return grantType switch
             {
                 GrantTypes.client_credentials => (IAuthenticator)_serviceProvider.GetRequiredService(typeof(ClientCredentialsAuthenticator)),
+                GrantTypes.code => _serviceProvider.GetRequiredService<AuthorizationCodeAuthenticator>(),
                 _ => (IAuthenticator)_serviceProvider.GetRequiredService(typeof(UnidentifiedAuthentication))
             };
         }

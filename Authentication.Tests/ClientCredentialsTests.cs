@@ -12,7 +12,7 @@ namespace Authentication.Tests
         {
             IAuthenticator authenticator = GetClientCredentailsAuthenticator();
 
-            AuthenticationResponse response = await authenticator.Authenticate(string.Empty);
+            AuthenticationResponse response = await authenticator.Authenticate(string.Empty, string.Empty);
 
             response.Should().BeFailure();
         }
@@ -23,7 +23,7 @@ namespace Authentication.Tests
             IAuthenticator authenticator = GetClientCredentailsAuthenticator();
             string header = TestHeaders.GetCorrectClientsCredentialsBasicHeader();
 
-            AuthenticationResponse response = await authenticator.Authenticate(header);
+            AuthenticationResponse response = await authenticator.Authenticate(header, string.Empty);
 
             response.Should().BeSuccess();
         }
@@ -34,7 +34,7 @@ namespace Authentication.Tests
             IAuthenticator authenticator = GetClientCredentailsAuthenticator();
             string header = TestHeaders.CreateBasicHeader("incorrectClientId", "incorrectClientSecret");
 
-            AuthenticationResponse response = await authenticator.Authenticate(header);
+            AuthenticationResponse response = await authenticator.Authenticate(header, string.Empty);
 
             response.Should().BeFailure();
         }
@@ -45,7 +45,7 @@ namespace Authentication.Tests
             IAuthenticator authenticator = GetClientCredentailsAuthenticator();
             string header = TestHeaders.CreateBasicHeader(TestHeaders.ClientId, "incorrectClientSecret");
 
-            AuthenticationResponse response = await authenticator.Authenticate(header);
+            AuthenticationResponse response = await authenticator.Authenticate(header, string.Empty);
 
             response.Should().BeFailure();
         }
@@ -59,7 +59,7 @@ namespace Authentication.Tests
                 clientsRepository,
                 new SecretVerifier());
 
-            AuthenticationResponse response = await authenticator.Authenticate(incorrectHeader);
+            AuthenticationResponse response = await authenticator.Authenticate(incorrectHeader, string.Empty);
 
             response.Should().BeFailure(because + " was passed");
         }

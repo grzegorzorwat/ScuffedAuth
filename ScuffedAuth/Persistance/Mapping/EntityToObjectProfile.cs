@@ -1,4 +1,5 @@
-﻿using Authorization.TokenEndpoint;
+﻿using Authentication.AuthorizationCode;
+using Authorization.TokenEndpoint;
 using AutoMapper;
 using ScuffedAuth.Persistance.Entities;
 using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
@@ -13,6 +14,7 @@ namespace ScuffedAuth.Persistance.Mapping
             CreateMap<ClientEntity, ClientCredentials.Client>();
             CreateMap<ClientEntity, AuthorizationEndpoint.Client>();
             CreateMap<TokenEntity, Token>();
+            CreateMap<AuthorizationCodeEntity, AuthorizationCode>();
         }
     }
 }

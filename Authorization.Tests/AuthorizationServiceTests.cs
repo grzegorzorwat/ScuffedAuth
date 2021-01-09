@@ -14,7 +14,7 @@ namespace Authorization.Tests
             IAuthorizationService service = GetAuthorizationService();
             AuthorizationRequest request = new TestAuthorizationRequestBuilder()
             {
-                ResponseType = "incorrectResponseType"
+                ResponseType = ResponseType.unidentified
             }.Build();
 
             AuthorizationResponse response = await service.Authorize(request);
@@ -58,16 +58,12 @@ namespace Authorization.Tests
 
         private class TestAuthorizationRequestBuilder
         {
-            public string ResponseType { private get; set; } = "code";
+            public ResponseType ResponseType { private get; set; } = ResponseType.code;
             public string ClientId { private get; set; } = "ClientId";
 
             public AuthorizationRequest Build()
             {
-                return new AuthorizationRequest
-                {
-                    ResponseType = ResponseType,
-                    ClientId = ClientId
-                };
+                return new AuthorizationRequest(ResponseType, ClientId);
             }
         }
     }

@@ -6,6 +6,7 @@ namespace Authorization
     public enum GrantTypes
     {
         unidentified,
-        client_credentials
+        client_credentials,
+        code
     }
 }

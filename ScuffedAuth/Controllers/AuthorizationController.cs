@@ -1,4 +1,4 @@
-﻿using Authorization.AuthorizationEndpoint;
+﻿using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
 using Authorization.IntrospectionEnpoint;
 using TokenEndpoint = Authorization.TokenEndpoint;
 using AutoMapper;
@@ -17,12 +17,12 @@ namespace ScuffedAuth.Controllers
         private readonly TokenEndpoint.ITokenService _tokenService;
         private readonly IMapper _mapper;
         private readonly IIntrospectionService _introspectionService;
-        private readonly Authorization.AuthorizationEndpoint.IAuthorizationService _authorizationService;
+        private readonly AuthorizationEndpoint.IAuthorizationService _authorizationService;
 
         public AuthorizationController(TokenEndpoint.ITokenService tokenService,
             IMapper mapper,
             IIntrospectionService introspectionService,
-            Authorization.AuthorizationEndpoint.IAuthorizationService authorizationService)
+            AuthorizationEndpoint.IAuthorizationService authorizationService)
         {
             _tokenService = tokenService;
             _mapper = mapper;
@@ -71,14 +71,15 @@ namespace ScuffedAuth.Controllers
         [Consumes("application/x-www-form-urlencoded")]
         public async Task<ActionResult> Authorize([FromQuery] AuthorizationRequest authorizationRequest)
         {
-            var response = await _authorizationService.Authorize(authorizationRequest);
+            var mappedRequest = _mapper.Map<AuthorizationRequest, AuthorizationEndpoint.AuthorizationRequest>(authorizationRequest);
+            var response = await _authorizationService.Authorize(mappedRequest);
 
             if (!response.Success)
             {
                 return BadRequest(response.Message);
             }
 
-            var resource = _mapper.Map<AuthorizationCode, AuthorizationCodeResource>(response.AuthorizationCode);
+            var resource = _mapper.Map<AuthorizationEndpoint.AuthorizationCode, AuthorizationEndpoint.AuthorizationCodeResource>(response.AuthorizationCode);
             return Ok(resource);
         }
     }

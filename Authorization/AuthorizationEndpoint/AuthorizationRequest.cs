@@ -1,13 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Authorization.AuthorizationEndpoint
+﻿namespace Authorization.AuthorizationEndpoint
 {
     public class AuthorizationRequest
     {
-        [Required]
-        public string? ResponseType { get; set; }
 
-        [Required]
-        public string? ClientId { get; set; }
+        public AuthorizationRequest(ResponseType responseType, string clientId)
+        {
+            ResponseType = responseType;
+            ClientId = clientId;
+        }
+
+        public ResponseType ResponseType { get; }
+
+        public string ClientId { get; }
     }
 }

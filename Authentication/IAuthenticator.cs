@@ -4,6 +4,6 @@ namespace Authentication
 {
     public interface IAuthenticator
     {
-        Task<AuthenticationResponse> Authenticate(string authorizationHeader);
+        Task<AuthenticationResponse> Authenticate(string authorizationHeader, string query);
     }
 }

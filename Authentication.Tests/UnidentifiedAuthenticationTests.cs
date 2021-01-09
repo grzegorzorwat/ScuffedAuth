@@ -11,7 +11,7 @@ namespace Authentication.Tests
             IAuthenticator authenticator = new UnidentifiedAuthentication();
             string header = TestHeaders.GetCorrectClientsCredentialsBasicHeader();
 
-            AuthenticationResponse response = await authenticator.Authenticate(header);
+            AuthenticationResponse response = await authenticator.Authenticate(header, string.Empty);
 
             response.Should().BeFailure();
         }

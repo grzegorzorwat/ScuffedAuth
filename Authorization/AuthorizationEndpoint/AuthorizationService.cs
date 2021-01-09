@@ -22,7 +22,7 @@ namespace Authorization.AuthorizationEndpoint
         {
             try
             {
-                if (request.ResponseType != "code")
+                if (request.ResponseType != ResponseType.code)
                 {
                     return new AuthorizationResponse("unsupported_response_type");
                 }

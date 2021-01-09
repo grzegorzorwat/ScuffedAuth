@@ -1,4 +1,5 @@
-﻿using Authentication.ClientCredentials;
+﻿using Authentication.AuthorizationCode;
+using Authentication.ClientCredentials;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -18,6 +19,10 @@ namespace Authentication
                     s => s.GetRequiredService<ClientCredentialsAuthenticator>());
             services.AddScoped<ClientCredentialsDecoder>();
             services.AddScoped<ISecretVerifier, SecretVerifier>();
+            services
+                .AddScoped<AuthorizationCodeAuthenticator>()
+                .AddScoped<IAuthenticator, AuthorizationCodeAuthenticator>(
+                    s => s.GetRequiredService<AuthorizationCodeAuthenticator>());
         }
 
         public static IAuthenticator GetClientCredentialsAuthorization(this IServiceProvider serviceProvider)
