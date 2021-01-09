@@ -7,6 +7,6 @@ namespace Authorization
     {
         unidentified,
         client_credentials,
-        code
+        authorization_code
     }
 }

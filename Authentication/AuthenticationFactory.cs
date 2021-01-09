@@ -22,7 +22,7 @@ namespace Authentication
             return grantType switch
             {
                 GrantTypes.client_credentials => (IAuthenticator)_serviceProvider.GetRequiredService(typeof(ClientCredentialsAuthenticator)),
-                GrantTypes.code => _serviceProvider.GetRequiredService<AuthorizationCodeAuthenticator>(),
+                GrantTypes.authorization_code => _serviceProvider.GetRequiredService<AuthorizationCodeAuthenticator>(),
                 _ => (IAuthenticator)_serviceProvider.GetRequiredService(typeof(UnidentifiedAuthentication))
             };
         }
