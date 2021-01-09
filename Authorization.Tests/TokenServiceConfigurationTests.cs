@@ -12,7 +12,7 @@ using Xunit;
 
 namespace ScuffedAuth.Tests
 {
-    public class TokenServiceTests
+    public class TokenServiceConfigurationTests
     {
         [Theory]
         [InlineData(60)]
