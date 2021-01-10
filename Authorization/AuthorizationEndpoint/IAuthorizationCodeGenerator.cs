@@ -2,6 +2,6 @@
 {
     public interface IAuthorizationCodeGenerator
     {
-        AuthorizationCode Generate(string clientId);
+        AuthorizationCode Generate(string clientId, string redirectionUri);
     }
 }

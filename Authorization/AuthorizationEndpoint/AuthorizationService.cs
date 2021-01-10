@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Authorization.AuthorizationEndpoint
 {
@@ -33,15 +34,31 @@ namespace Authorization.AuthorizationEndpoint
                     return new AuthorizationResponse("unauthorized_client");
                 }
 
-                var authorizationCode = _authorizationCodeGenerator.Generate(client.Id);
+                string redirectionUri = request.RedirectUri
+                    ?? client.RedirectionUri
+                    ?? string.Empty;
+
+                if (IsInvalidRedirectUri(redirectionUri))
+                {
+                    return new AuthorizationResponse("invalid_request");
+                }
+
+                var authorizationCode = _authorizationCodeGenerator.Generate(client.Id, redirectionUri);
                 await _authorizationCodesRepository.AddAuthorizationCode(authorizationCode);
                 await _unitOfWork.Complete();
                 return new AuthorizationResponse(authorizationCode);
             }
             catch
             {
-                return new AuthorizationResponse("An error occurred when saving the token.");
+                return new AuthorizationResponse("An error occurred when getting authorization code.");
             }
+        }
+
+        private static bool IsInvalidRedirectUri(string redirectionUri)
+        {
+            return string.IsNullOrEmpty(redirectionUri)
+                || !(Uri.TryCreate(redirectionUri, UriKind.Absolute, out var result)
+                    && (result.Scheme == Uri.UriSchemeHttp || result.Scheme == Uri.UriSchemeHttps));
         }
     }
 }

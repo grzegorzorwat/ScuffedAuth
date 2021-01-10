@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Authorization.AuthorizationEndpoint
+﻿namespace Authorization.AuthorizationEndpoint
 {
     public class Client
     {
@@ -9,6 +7,14 @@ namespace Authorization.AuthorizationEndpoint
             Id = id;
         }
 
+        public Client(string id, string? redirectionUri)
+        {
+            Id = id;
+            RedirectionUri = redirectionUri;
+        }
+
         public string Id { get; }
+
+        public string? RedirectionUri { get; }
     }
 }

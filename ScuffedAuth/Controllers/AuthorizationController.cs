@@ -93,7 +93,7 @@ namespace ScuffedAuth.Controllers
             }
 
             var resource = _mapper.Map<AuthorizationEndpoint.AuthorizationCode, AuthorizationEndpoint.AuthorizationCodeResource>(response.AuthorizationCode);
-            return Ok(resource);
+            return Redirect(response.AuthorizationCode.RedirectUri + resource.ToQueryString());
         }
     }
 }

@@ -20,6 +20,7 @@ namespace ScuffedAuth.Persistance
             builder.Entity<ClientEntity>().HasKey(p => p.Id);
             builder.Entity<ClientEntity>().Property(p => p.Id).IsRequired().HasMaxLength(32);
             builder.Entity<ClientEntity>().Property(p => p.Secret).IsRequired().HasMaxLength(74);
+            builder.Entity<ClientEntity>().Property(p => p.RedirectUri).HasMaxLength(200);
 
             builder.Entity<ClientEntity>().HasData
             (

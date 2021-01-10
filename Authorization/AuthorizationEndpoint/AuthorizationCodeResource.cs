@@ -1,4 +1,6 @@
-﻿namespace Authorization.AuthorizationEndpoint
+﻿using System.Web;
+
+namespace Authorization.AuthorizationEndpoint
 {
     public class AuthorizationCodeResource
     {
@@ -8,5 +10,10 @@
         }
 
         public string Code { get; init; }
+
+        public string ToQueryString()
+        {
+            return $"?code={HttpUtility.UrlEncode(Code)}";
+        }
     }
 }
