@@ -4,6 +4,7 @@ using Authorization;
 using Authorization.IntrospectionEnpoint;
 using Authorization.TokenEndpoint;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +12,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using ScuffedAuth.Authentication;
+using ScuffedAuth.Middlewares.Authentication;
+using ScuffedAuth.Middlewares.Authorization;
 using ScuffedAuth.Persistance;
 using System;
-using AuthorizationCode = Authentication.AuthorizationCode;
+using AuthorizationCode = Authorization.AuthorizationCode;
 using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
 
 namespace ScuffedAuth
@@ -82,6 +84,8 @@ namespace ScuffedAuth
             services.AddScoped<AuthorizationCode.IAuthorizationCodesRepository, AuthorizationCodesRepository>();
 
             ServicesConfiguration.AddAuthentication(services);
+            services.RegisterAuthorization();
+
             services.AddHttpContextAccessor();
             services
                 .AddAuthentication(options =>
@@ -90,6 +94,13 @@ namespace ScuffedAuth
                 })
                 .AddScheme<GrantTypesAuthenticationSchemeOptions, GrantTypesAuthenticationHandler>(
                     AuthenticationSchemeConstants.GrantTypesAuthenticationScheme, op => { });
+            services
+                .AddAuthorization(options =>
+                {
+                    options.AddPolicy("GrantTypeAuthorization", policy =>
+                        policy.Requirements.Add(new GrantTypesAuthorizationRequirement()));
+                });
+            services.AddScoped<IAuthorizationHandler, GrantTypesAuthorizationHandler>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -1,5 +1,4 @@
-﻿using Authentication.ClientCredentials;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Authorization.AuthorizationEndpoint
 {
@@ -18,7 +17,7 @@ namespace Authorization.AuthorizationEndpoint
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<AuthorizationResponse> Authorize(AuthorizationRequest request)
+        public async Task<AuthorizationResponse> Authorize(AuthorizationServiceRequest request)
         {
             try
             {

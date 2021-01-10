@@ -4,6 +4,6 @@ namespace Authorization.AuthorizationEndpoint
 {
     public interface IAuthorizationService
     {
-        Task<AuthorizationResponse> Authorize(AuthorizationRequest request);
+        Task<AuthorizationResponse> Authorize(AuthorizationServiceRequest request);
     }
 }

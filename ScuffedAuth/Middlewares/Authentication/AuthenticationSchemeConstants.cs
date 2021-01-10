@@ -1,4 +1,4 @@
-﻿namespace ScuffedAuth.Authentication
+﻿namespace ScuffedAuth.Middlewares.Authentication
 {
     public static class AuthenticationSchemeConstants
     {

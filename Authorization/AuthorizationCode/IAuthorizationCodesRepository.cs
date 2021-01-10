@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Authentication.AuthorizationCode
+namespace Authorization.AuthorizationCode
 {
     public interface IAuthorizationCodesRepository
     {

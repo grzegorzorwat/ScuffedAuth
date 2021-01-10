@@ -1,9 +1,9 @@
 ﻿namespace Authorization.AuthorizationEndpoint
 {
-    public class AuthorizationRequest
+    public class AuthorizationServiceRequest
     {
 
-        public AuthorizationRequest(ResponseType responseType, string clientId)
+        public AuthorizationServiceRequest(ResponseType responseType, string clientId)
         {
             ResponseType = responseType;
             ClientId = clientId;

@@ -10,7 +10,7 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
-namespace ScuffedAuth.Authentication
+namespace ScuffedAuth.Middlewares.Authentication
 {
     public class GrantTypesAuthenticationHandler : AuthenticationHandler<GrantTypesAuthenticationSchemeOptions>
     {
@@ -38,8 +38,7 @@ namespace ScuffedAuth.Authentication
                 {
                     var grantType = GetGrantType();
                     var authorization = _authenticationFactory.GetAuthentication(grantType);
-                    var response = await authorization.Authenticate(httpContext.Request.Headers[HeaderNames.Authorization],
-                        httpContext.Request.QueryString.Value ?? string.Empty);
+                    var response = await authorization.Authenticate(httpContext.Request.Headers[HeaderNames.Authorization]);
 
                     if (response.Success)
                     {

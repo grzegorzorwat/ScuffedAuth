@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ScuffedAuth.Requests;
-using TokenEndpoint = Authorization.TokenEndpoint;
 using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
+using TokenEndpoint = Authorization.TokenEndpoint;
 
 namespace ScuffedAuth.Mapping
 {
@@ -10,7 +10,8 @@ namespace ScuffedAuth.Mapping
         public RequestToModelProfile()
         {
             CreateMap<TokenRequest, TokenEndpoint.TokenRequest>();
-            CreateMap<AuthorizationRequest, AuthorizationEndpoint.AuthorizationRequest>();
+            CreateMap<TokenRequest, Authorization.AuthorizationRequest>();
+            CreateMap<AuthorizationRequest, AuthorizationEndpoint.AuthorizationServiceRequest>();
         }
     }
 }

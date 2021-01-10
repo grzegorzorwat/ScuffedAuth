@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 
-namespace ScuffedAuth.Authentication
+namespace ScuffedAuth.Middlewares.Authentication
 {
     public class GrantTypesAuthenticationSchemeOptions : AuthenticationSchemeOptions
     {

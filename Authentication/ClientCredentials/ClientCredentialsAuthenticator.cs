@@ -17,7 +17,7 @@ namespace Authentication.ClientCredentials
             _secretVerifier = secretVerifier;
         }
 
-        public async Task<AuthenticationResponse> Authenticate(string authorizationHeader, string query)
+        public async Task<AuthenticationResponse> Authenticate(string authorizationHeader)
         {
             if (_decoder.TryDecode(authorizationHeader, out var credentials))
             {

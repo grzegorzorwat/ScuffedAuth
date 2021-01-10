@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using ScuffedAuth.Persistance.Entities;
 using System.Threading.Tasks;
-using AuthorizationCode = Authentication.AuthorizationCode;
+using AuthorizationCode = Authorization.AuthorizationCode;
 using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
 
 namespace ScuffedAuth.Persistance
 {
-    public class AuthorizationCodesRepository : BaseRepository, AuthorizationEndpoint.IAuthorizationCodesRepository, AuthorizationCode.IAuthorizationCodesRepository
+    public class AuthorizationCodesRepository : BaseRepository,
+        AuthorizationEndpoint.IAuthorizationCodesRepository,
+        AuthorizationCode.IAuthorizationCodesRepository
     {
         public AuthorizationCodesRepository(AppDbContext context, IMapper mapper) : base(context, mapper) { }
 

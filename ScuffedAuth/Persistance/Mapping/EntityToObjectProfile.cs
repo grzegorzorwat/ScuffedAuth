@@ -1,4 +1,4 @@
-﻿using Authentication.AuthorizationCode;
+﻿using Authorization.AuthorizationCode;
 using Authorization.TokenEndpoint;
 using AutoMapper;
 using ScuffedAuth.Persistance.Entities;
