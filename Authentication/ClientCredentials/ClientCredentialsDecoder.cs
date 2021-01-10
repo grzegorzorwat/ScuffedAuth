@@ -28,9 +28,19 @@ namespace Authentication.ClientCredentials
 
         private void Decode()
         {
+            CheckIsValid();
             RemoveBasicHeaderPrefix();
             DecodeFromBase64String();
             ExtractCredentials();
+        }
+
+        private void CheckIsValid()
+        {
+            if (string.IsNullOrEmpty(_value))
+            {
+                _canContinue = false;
+                return;
+            }
         }
 
         private void RemoveBasicHeaderPrefix()

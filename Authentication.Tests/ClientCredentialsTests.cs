@@ -59,9 +59,19 @@ namespace Authentication.Tests
                 clientsRepository,
                 new SecretVerifier());
 
-            AuthenticationResponse response = await authenticator.Authenticate(incorrectHeader, string.Empty);
+            AuthenticationResponse response = await authenticator.Authenticate(incorrectHeader);
 
             response.Should().BeFailure(because + " was passed");
+        }
+
+        [Fact]
+        public async Task ShouldReturnFailureResponseForNullHeader()
+        {
+            IAuthenticator authenticator = GetClientCredentailsAuthenticator();
+
+            AuthenticationResponse response = await authenticator.Authenticate(null, string.Empty);
+
+            response.Should().BeFailure();
         }
 
         private static IAuthenticator GetClientCredentailsAuthenticator()
