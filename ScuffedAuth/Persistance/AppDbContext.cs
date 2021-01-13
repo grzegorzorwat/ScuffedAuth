@@ -51,6 +51,7 @@ namespace ScuffedAuth.Persistance
             builder.Entity<AuthorizationCodeEntity>().Property(p => p.CreationDate).IsRequired();
             builder.Entity<AuthorizationCodeEntity>().Property(p => p.ExpiresIn).IsRequired();
             builder.Entity<AuthorizationCodeEntity>().Property(p => p.ClientId).IsRequired().HasMaxLength(32);
+            builder.Entity<AuthorizationCodeEntity>().Property(p => p.RedirectUri).HasMaxLength(200);
         }
     }
 }

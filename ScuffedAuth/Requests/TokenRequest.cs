@@ -15,5 +15,8 @@ namespace ScuffedAuth.Requests
 
         [FromQuery(Name = "client_id")]
         public string? ClientId { get; set; }
+
+        [FromQuery(Name = "redirect_uri")]
+        public string? RedirectUri { get; set; }
     }
 }

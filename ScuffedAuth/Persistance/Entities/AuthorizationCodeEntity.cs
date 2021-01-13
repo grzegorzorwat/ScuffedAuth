@@ -11,5 +11,7 @@ namespace ScuffedAuth.Persistance.Entities
         public DateTime CreationDate { get; set; }
 
         public int ExpiresIn { get; set; }
+
+        public string? RedirectUri { get; set; }
     }
 }
