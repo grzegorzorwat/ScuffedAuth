@@ -22,7 +22,8 @@ namespace Authorization.AuthorizationCode
 
                 if (authorizationCode is not null
                     && authorizationCode.ClientId == _request.ClientId
-                    && !authorizationCode.IsExpired)
+                    && !authorizationCode.IsExpired
+                    && authorizationCode.RedirectUri == _request.RedirectUri)
                 {
                     return true;
                 }

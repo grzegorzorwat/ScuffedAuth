@@ -7,5 +7,7 @@
         public string? Code { get; init; }
 
         public string? ClientId { get; init; }
+
+        public string? RedirectUri { get; init; }
     }
 }

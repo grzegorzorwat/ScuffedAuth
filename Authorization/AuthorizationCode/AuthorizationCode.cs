@@ -20,5 +20,7 @@ namespace Authorization.AuthorizationCode
                 return DateTime.UtcNow.CompareTo(CreationDate.AddSeconds(ExpiresIn)) > 0;
             }
         }
+
+        public string? RedirectUri { get; init; }
     }
 }

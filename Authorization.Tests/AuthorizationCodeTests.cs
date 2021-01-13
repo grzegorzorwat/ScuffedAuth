@@ -12,6 +12,8 @@ namespace Authorization.Tests
     {
         private const string CorrectCode = "code";
         private const string CorrectClientId = "ClientId";
+        private const string ExampleUri = "http://www.example.com";
+
 
         [Fact]
         public async Task ShouldPassForCorrectRequest()
@@ -111,16 +113,93 @@ namespace Authorization.Tests
             result.Should().BeFalse();
         }
 
+        [Fact]
+        public async Task ShouldFailForRequestWithoutRedirectUriIfCodeWasIssuedWithRedirectUri()
+        {
+            var authorizationCode = new AuthorizationCode.AuthorizationCode()
+            {
+                Code = CorrectCode,
+                ClientId = CorrectClientId,
+                CreationDate = DateTime.UtcNow,
+                ExpiresIn = 60,
+                RedirectUri = ExampleUri
+            };
+            var request = new AuthorizationRequest()
+            {
+                Code = CorrectCode,
+                ClientId = CorrectClientId
+            };
+            IAuthorizator authorizator = GetAuthorizator(authorizationCode, request);
+
+            bool result = await authorizator.Authorize();
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task ShouldFailForRequestWithRedirectUriNotMatchingRedirectUriCodeWasIssuedWith()
+        {
+            var authorizationCode = new AuthorizationCode.AuthorizationCode()
+            {
+                Code = CorrectCode,
+                ClientId = CorrectClientId,
+                CreationDate = DateTime.UtcNow,
+                ExpiresIn = 60,
+                RedirectUri = ExampleUri
+            };
+            var request = new AuthorizationRequest()
+            {
+                Code = CorrectCode,
+                ClientId = CorrectClientId,
+                RedirectUri = "http://www.otherexample.com"
+            };
+            IAuthorizator authorizator = GetAuthorizator(authorizationCode, request);
+
+            bool result = await authorizator.Authorize();
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task ShouldPassForRequestWithRedirectUriMatchingRedirectUriCodeWasIssuedWith()
+        {
+            var authorizationCode = new AuthorizationCode.AuthorizationCode()
+            {
+                Code = CorrectCode,
+                ClientId = CorrectClientId,
+                CreationDate = DateTime.UtcNow,
+                ExpiresIn = 60,
+                RedirectUri = ExampleUri
+            };
+            var request = new AuthorizationRequest()
+            {
+                Code = CorrectCode,
+                ClientId = CorrectClientId,
+                RedirectUri = ExampleUri
+            };
+            IAuthorizator authorizator = GetAuthorizator(authorizationCode, request);
+
+            bool result = await authorizator.Authorize();
+
+            result.Should().BeTrue();
+        }
+
         private static IAuthorizator GetAuthorizator(AuthorizationRequest request)
         {
-            IAuthorizationCodesRepository authorzationCodesRepository = Substitute.For<IAuthorizationCodesRepository>();
-            authorzationCodesRepository.GetAuthorizationCode(CorrectCode).Returns(new AuthorizationCode.AuthorizationCode()
+            var authorizationCode = new AuthorizationCode.AuthorizationCode()
             {
                 Code = CorrectCode,
                 ClientId = CorrectClientId,
                 CreationDate = DateTime.UtcNow,
                 ExpiresIn = 60
-            });
+            };
+            return GetAuthorizator(authorizationCode, request);
+        }
+
+        private static IAuthorizator GetAuthorizator(AuthorizationCode.AuthorizationCode authorizationCode, AuthorizationRequest request)
+        {
+            IAuthorizationCodesRepository authorzationCodesRepository = Substitute.For<IAuthorizationCodesRepository>();
+            authorzationCodesRepository.GetAuthorizationCode(authorizationCode.Code).Returns(authorizationCode);
             return new AuthorizationCodeAuthorizator(authorzationCodesRepository, request);
         }
     }
