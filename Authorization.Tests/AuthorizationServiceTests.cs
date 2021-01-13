@@ -68,11 +68,8 @@ namespace Authorization.Tests
         [Fact]
         public async Task ShouldReturnRedirectionUriFromClientWhenRequestWithoutRedirectUriIsPassed()
         {
-            var clients = new Dictionary<string, Client>()
-            {
-                ["ClientId"] = new Client("ClientId", ExampleUri)
-            };
-            IAuthorizationService service = GetAuthorizationService(clients);
+            var client = new Client("ClientId", ExampleUri);
+            IAuthorizationService service = GetAuthorizationService(client);
             AuthorizationServiceRequest request = new TestAuthorizationRequestBuilder()
             {
                 RedirectUri = null
@@ -86,11 +83,8 @@ namespace Authorization.Tests
         [Fact]
         public async Task ShouldReturnRedirectionUriFromRequestWhenRequestWithRedirectUriIsPassedForClientWithoutRedirectUri()
         {
-            var clients = new Dictionary<string, Client>()
-            {
-                ["ClientId"] = new Client("ClientId")
-            };
-            IAuthorizationService service = GetAuthorizationService(clients);
+            var client = new Client("ClientId");
+            IAuthorizationService service = GetAuthorizationService(client);
             AuthorizationServiceRequest request = new TestAuthorizationRequestBuilder()
             {
                 RedirectUri = ExampleUri
@@ -104,11 +98,8 @@ namespace Authorization.Tests
         [Fact]
         public async Task ShouldReturnRedirectionUriFromRequestWhenRequestWithRedirectUriIsPassedForClientWithRedirectUri()
         {
-            var clients = new Dictionary<string, Client>()
-            {
-                ["ClientId"] = new Client("ClientId", ExampleUri)
-            };
-            IAuthorizationService service = GetAuthorizationService(clients);
+            var client = new Client("ClientId", ExampleUri);
+            IAuthorizationService service = GetAuthorizationService(client);
             AuthorizationServiceRequest request = new TestAuthorizationRequestBuilder()
             {
                 RedirectUri = OtherExampleUri
@@ -139,19 +130,13 @@ namespace Authorization.Tests
 
         private static AuthorizationService GetAuthorizationService()
         {
-            return GetAuthorizationService(new Dictionary<string, Client>()
-            {
-                ["ClientId"] = new Client("ClientId")
-            });
+            return GetAuthorizationService(new Client("ClientId"));
         }
 
-        private static AuthorizationService GetAuthorizationService(Dictionary<string, Client> clients)
+        private static AuthorizationService GetAuthorizationService(Client client)
         {
             IAuthorizationCodesRepository repository = Substitute.For<IAuthorizationCodesRepository>();
-            foreach(var client in clients)
-            {
-                repository.GetClientByIdAsync(client.Key).Returns(client.Value);
-            }
+            repository.GetClientByIdAsync(client.Id).Returns(client);
 
             return new AuthorizationService(new AuthorizationCodeGenerator(),
                 repository,
@@ -161,7 +146,9 @@ namespace Authorization.Tests
         private class TestAuthorizationRequestBuilder
         {
             public ResponseType ResponseType { private get; set; } = ResponseType.code;
+
             public string ClientId { private get; set; } = "ClientId";
+
             public string? RedirectUri { private get; set; } = ExampleUri;
 
             public AuthorizationServiceRequest Build()
