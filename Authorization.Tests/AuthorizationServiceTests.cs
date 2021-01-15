@@ -1,7 +1,8 @@
 ﻿using Authorization.AuthorizationEndpoint;
+using Authorization.Codes;
 using FluentAssertions;
+using Microsoft.Extensions.Options;
 using NSubstitute;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -137,8 +138,14 @@ namespace Authorization.Tests
         {
             IAuthorizationCodesRepository repository = Substitute.For<IAuthorizationCodesRepository>();
             repository.GetClientByIdAsync(client.Id).Returns(client);
-
-            return new AuthorizationService(new AuthorizationCodeGenerator(),
+            var settings = new ExpiringCodesGeneratorSettings()
+            {
+                ExpiresIn = 60,
+                Length = 32
+            };
+            var options = Options.Create(settings);
+            var generator = new ExpiringCodesGenerator<AuthorizationEndpoint.AuthorizationCode>(options);
+            return new AuthorizationService(new AuthorizationCodeGenerator(generator),
                 repository,
                 Substitute.For<IUnitOfWork>());
         }

@@ -72,6 +72,10 @@ namespace ScuffedAuth
                 .AddOptions<TokenGeneratorSettings>()
                 .Bind(Configuration.GetSection("TokenGeneratorSettings"))
                 .ValidateDataAnnotations();
+            services
+                .AddOptions<Authorization.Codes.ExpiringCodesGeneratorSettings> ()
+                .Bind(Configuration.GetSection("AuthorizationCodeSettings"))
+                .ValidateDataAnnotations();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IClientsRepository, ClientsRepository>();
@@ -80,6 +84,8 @@ namespace ScuffedAuth
             services.AddScoped<IIntrospectionService, IntrospectionService>();
             services.AddScoped<AuthorizationEndpoint.IAuthorizationService, AuthorizationEndpoint.AuthorizationService>();
             services.AddScoped<AuthorizationEndpoint.IAuthorizationCodesRepository, AuthorizationCodesRepository>();
+            services.AddScoped<ICodesGenerator<AuthorizationEndpoint.AuthorizationCode>,
+                Authorization.Codes.ExpiringCodesGenerator<AuthorizationEndpoint.AuthorizationCode>>();
             services.AddScoped<AuthorizationEndpoint.IAuthorizationCodeGenerator, AuthorizationEndpoint.AuthorizationCodeGenerator>();
             services.AddScoped<AuthorizationCode.IAuthorizationCodesRepository, AuthorizationCodesRepository>();
 

@@ -1,26 +1,55 @@
-﻿using System;
+﻿using Authorization.Codes;
+using System;
 
 namespace Authorization.AuthorizationEndpoint
 {
-    public class AuthorizationCode
+    public class AuthorizationCode : ExpiringCode
     {
-        public AuthorizationCode(string code, string clientId, DateTime creationDate, int expiresIn, string redirectionUri)
-        {
-            Code = code;
-            ClientId = clientId;
-            CreationDate = creationDate;
-            ExpiresIn = expiresIn;
-            RedirectUri = redirectionUri;
+        private string? _clientId;
+        private string? _redirectUri;
+
+        public string ClientId 
+        { 
+            get
+            {
+                if(_clientId is null)
+                {
+                    throw new InvalidOperationException($"{nameof(ClientId)} is not set");
+                }
+
+                return _clientId;
+            }
+            set
+            {
+                if(_clientId is not null)
+                {
+                    throw new InvalidOperationException($"{nameof(ClientId)} is already set");
+                }
+
+                _clientId = value;
+            }
         }
 
-        public string Code { get; init; }
+        public string RedirectUri
+        {
+            get
+            {
+                if (_redirectUri is null)
+                {
+                    throw new InvalidOperationException($"{nameof(RedirectUri)} is not set");
+                }
 
-        public string ClientId { get; init; }
+                return _redirectUri;
+            }
+            set
+            {
+                if (_redirectUri is not null)
+                {
+                    throw new InvalidOperationException($"{nameof(RedirectUri)} is already set");
+                }
 
-        public DateTime CreationDate { get; init; }
-
-        public int ExpiresIn { get; init; }
-
-        public string RedirectUri { get; init; }
+                _redirectUri = value;
+            }
+        }
     }
 }

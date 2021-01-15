@@ -13,7 +13,8 @@ namespace ScuffedAuth.Persistance.Mapping
             CreateMap<ClientCredentials.Client, ClientEntity>();
             CreateMap<Token, TokenEntity>();
             CreateMap<AuthorizationEndpoint.Client, ClientEntity>();
-            CreateMap<AuthorizationEndpoint.AuthorizationCode, AuthorizationCodeEntity>();
+            CreateMap<AuthorizationEndpoint.AuthorizationCode, AuthorizationCodeEntity>()
+                .ForMember(dest => dest.ExpiresIn, opt => opt.MapFrom(src => src.ExpiresIn.TotalSeconds)); ;
         }
     }
 }
