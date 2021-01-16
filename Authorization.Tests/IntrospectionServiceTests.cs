@@ -79,12 +79,24 @@ namespace ScuffedAuth.Tests
 
         private static Task<Token> AnActiveToken(string token)
         {
-            return Task.FromResult(new Token(token, "", DateTime.UtcNow, 3600));
+            return Task.FromResult(new Token()
+            {
+                Code = token,
+                TokenType = string.Empty,
+                CreationDate = DateTime.UtcNow,
+                ExpiresIn = TimeSpan.FromSeconds(3600)
+            });
         }
 
         private static Task<Token> AnInacriveToken(string token)
         {
-            return Task.FromResult(new Token(token, "", DateTime.UtcNow.AddSeconds(-7200), 3600));
+            return Task.FromResult(new Token()
+            {
+                Code = token,
+                TokenType = string.Empty,
+                CreationDate = DateTime.UtcNow.AddSeconds(-7200),
+                ExpiresIn = TimeSpan.FromSeconds(3600)
+            });
         }
     }
 }

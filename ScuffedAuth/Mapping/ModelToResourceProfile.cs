@@ -10,7 +10,8 @@ namespace ScuffedAuth.Mapping
         public ModelToResourceProfile()
         {
             CreateMap<Token, TokenResource>()
-                .ForMember(dest => dest.AccessToken, opt => opt.MapFrom(src => src.Value));
+                .ForMember(dest => dest.AccessToken, opt => opt.MapFrom(src => src.Code))
+                .ForMember(dest => dest.ExpiresIn, opt => opt.MapFrom(src => src.ExpiresIn.TotalSeconds));
             CreateMap<TokenInfo, TokenInfoResource>();
             CreateMap<AuthorizationCode, AuthorizationCodeResource>();
         }

@@ -22,7 +22,7 @@ namespace Authorization.IntrospectionEnpoint
 
             var token = await _tokenRepository.GetToken(request.Token);
 
-            if (token?.CreationDate.AddSeconds(token.ExpiresIn) > DateTime.UtcNow)
+            if (token?.CreationDate.Add(token.ExpiresIn) > DateTime.UtcNow)
             {
                 return new IntrospectionResponse(new TokenInfo(request.Token, true));
             }

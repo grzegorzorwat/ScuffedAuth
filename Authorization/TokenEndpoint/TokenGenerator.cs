@@ -1,28 +1,26 @@
-﻿using Microsoft.Extensions.Options;
-using System;
-using System.Linq;
-using System.Security.Cryptography;
+﻿using Authorization.Codes;
+using Microsoft.Extensions.Options;
 
 namespace Authorization.TokenEndpoint
 {
-    public class TokenGenerator : ITokenGenerator
+    public class TokenGenerator : ExpiringCodesGenerator, ITokenGenerator
     {
-        private readonly TokenGeneratorSettings _options;
+        private readonly TokenGeneratorSettings _settings;
 
-        public TokenGenerator(IOptions<TokenGeneratorSettings> options)
+        public TokenGenerator(IOptions<TokenGeneratorSettings> settings) : base(settings)
         {
-            _options = options.Value;
+            _settings = settings.Value;
         }
 
         public Token Generate()
         {
-            using var cryptoServiceProvider = new RNGCryptoServiceProvider();
-            var bytes = new byte[_options.Length / 2];
-            cryptoServiceProvider.GetNonZeroBytes(bytes);
-            return new Token(string.Concat(bytes.Select(b => b.ToString("x2"))),
-                _options.TokenType,
-                DateTime.UtcNow,
-                _options.ExpiresIn);
+            return new Token
+            {
+                Code = GenerateCode(),
+                CreationDate = GetCreationDate(),
+                ExpiresIn = GetExpiresIn(),
+                TokenType = _settings.TokenType
+            };
         }
     }
 }

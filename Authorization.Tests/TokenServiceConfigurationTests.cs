@@ -33,7 +33,7 @@ namespace ScuffedAuth.Tests
 
             TokenResponse response = await service.GetToken(request);
 
-            response.Token.ExpiresIn.Should().Be(expiresIn);
+            response.Token.ExpiresIn.Should().Be(TimeSpan.FromSeconds(expiresIn));
         }
 
         [Theory]
@@ -56,7 +56,7 @@ namespace ScuffedAuth.Tests
 
             TokenResponse response = await service.GetToken(request);
 
-            response.Token.Value.Length.Should().Be(length);
+            response.Token.Code.Length.Should().Be(length);
         }
 
         [Theory]
@@ -108,7 +108,7 @@ namespace ScuffedAuth.Tests
 
             TokenResponse response = await service.GetToken(request);
 
-            response.Token.Value.Length.Should().Be(expectedLength);
+            response.Token.Code.Length.Should().Be(expectedLength);
         }
 
         [Theory]

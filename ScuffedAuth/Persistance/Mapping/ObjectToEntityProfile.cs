@@ -11,7 +11,9 @@ namespace ScuffedAuth.Persistance.Mapping
         public ObjectToEntityProfile()
         {
             CreateMap<ClientCredentials.Client, ClientEntity>();
-            CreateMap<Token, TokenEntity>();
+            CreateMap<Token, TokenEntity>()
+                .ForMember(dest => dest.Value, opt => opt.MapFrom(src => src.Code))
+                .ForMember(dest => dest.ExpiresIn, opt => opt.MapFrom(src => src.ExpiresIn.TotalSeconds));
             CreateMap<AuthorizationEndpoint.Client, ClientEntity>();
             CreateMap<AuthorizationEndpoint.AuthorizationCode, AuthorizationCodeEntity>()
                 .ForMember(dest => dest.ExpiresIn, opt => opt.MapFrom(src => src.ExpiresIn.TotalSeconds)); ;
