@@ -138,14 +138,12 @@ namespace Authorization.Tests
         {
             IAuthorizationCodesRepository repository = Substitute.For<IAuthorizationCodesRepository>();
             repository.GetClientByIdAsync(client.Id).Returns(client);
-            var settings = new ExpiringCodesGeneratorSettings()
+            var settings = Options.Create(new ExpiringCodesGeneratorSettings()
             {
                 ExpiresIn = 60,
                 Length = 32
-            };
-            var options = Options.Create(settings);
-            var generator = new ExpiringCodesGenerator<AuthorizationEndpoint.AuthorizationCode>(options);
-            return new AuthorizationService(new AuthorizationCodeGenerator(generator),
+            });
+            return new AuthorizationService(new AuthorizationCodeGenerator(settings),
                 repository,
                 Substitute.For<IUnitOfWork>());
         }

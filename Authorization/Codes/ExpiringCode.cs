@@ -5,10 +5,10 @@ namespace Authorization.Codes
 {
     public abstract class ExpiringCode
     {
-        [NotNull] public string? Code { get; set; }
+        [NotNull] public string? Code { get; init; }
 
-        public DateTime CreationDate { get; set; }
+        public DateTime CreationDate { get; init; }
 
-        public TimeSpan ExpiresIn { get; set; }
+        public TimeSpan ExpiresIn { get; init; }
     }
 }

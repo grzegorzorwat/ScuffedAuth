@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 
 namespace Authorization.Codes
 {
-    public class ExpiringCodesGenerator<T> : ICodesGenerator<T> where T : ExpiringCode, new()
+    public abstract class ExpiringCodesGenerator
     {
         private readonly ExpiringCodesGeneratorSettings _settings;
 
@@ -14,17 +14,22 @@ namespace Authorization.Codes
             _settings = settings.Value;
         }
 
-        public T Generate()
+        protected string GenerateCode()
         {
             using var cryptoServiceProvider = new RNGCryptoServiceProvider();
             var bytes = new byte[_settings.Length / 2];
             cryptoServiceProvider.GetNonZeroBytes(bytes);
-            return new T
-            {
-                Code = string.Concat(bytes.Select(b => b.ToString("x2"))),
-                CreationDate = DateTime.UtcNow,
-                ExpiresIn = TimeSpan.FromSeconds(_settings.ExpiresIn)
-            };
+            return string.Concat(bytes.Select(b => b.ToString("x2")));
+        }
+
+        protected DateTime GetCreationDate()
+        {
+            return DateTime.UtcNow;
+        }
+
+        protected TimeSpan GetExpiresIn()
+        {
+            return TimeSpan.FromSeconds(_settings.ExpiresIn);
         }
     }
 }

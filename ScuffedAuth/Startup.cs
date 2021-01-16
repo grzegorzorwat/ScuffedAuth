@@ -84,8 +84,6 @@ namespace ScuffedAuth
             services.AddScoped<IIntrospectionService, IntrospectionService>();
             services.AddScoped<AuthorizationEndpoint.IAuthorizationService, AuthorizationEndpoint.AuthorizationService>();
             services.AddScoped<AuthorizationEndpoint.IAuthorizationCodesRepository, AuthorizationCodesRepository>();
-            services.AddScoped<ICodesGenerator<AuthorizationEndpoint.AuthorizationCode>,
-                Authorization.Codes.ExpiringCodesGenerator<AuthorizationEndpoint.AuthorizationCode>>();
             services.AddScoped<AuthorizationEndpoint.IAuthorizationCodeGenerator, AuthorizationEndpoint.AuthorizationCodeGenerator>();
             services.AddScoped<AuthorizationCode.IAuthorizationCodesRepository, AuthorizationCodesRepository>();
 

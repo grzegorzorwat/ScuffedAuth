@@ -1,20 +1,22 @@
-﻿namespace Authorization.AuthorizationEndpoint
+﻿using Authorization.Codes;
+using Microsoft.Extensions.Options;
+
+namespace Authorization.AuthorizationEndpoint
 {
-    public class AuthorizationCodeGenerator : IAuthorizationCodeGenerator
+    public class AuthorizationCodeGenerator : ExpiringCodesGenerator, IAuthorizationCodeGenerator
     {
-        private readonly ICodesGenerator<AuthorizationCode> _codesGenerator;
+        public AuthorizationCodeGenerator(IOptions<ExpiringCodesGeneratorSettings> settings) : base(settings) { }
 
-        public AuthorizationCodeGenerator(ICodesGenerator<AuthorizationCode> codesGenerator)
+        public AuthorizationCode Generate(string clientId, string redirectUri)
         {
-            _codesGenerator = codesGenerator;
-        }
-
-        public AuthorizationCode Generate(string clientId, string redirectionUri)
-        {
-            var code = _codesGenerator.Generate();
-            code.ClientId = clientId;
-            code.RedirectUri = redirectionUri;
-            return code;
+            return new AuthorizationCode()
+            {
+                Code = GenerateCode(),
+                CreationDate = GetCreationDate(),
+                ExpiresIn = GetExpiresIn(),
+                ClientId = clientId,
+                RedirectUri = redirectUri
+            };
         }
     }
 }
