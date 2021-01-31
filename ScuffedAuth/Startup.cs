@@ -32,7 +32,7 @@ namespace ScuffedAuth
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            //services.AddControllers();
             services
                 .AddSwaggerGen(c =>
                 {
@@ -91,20 +91,22 @@ namespace ScuffedAuth
             services.RegisterAuthorization();
 
             services.AddHttpContextAccessor();
-            services
-                .AddAuthentication(options =>
-                {
-                    options.DefaultScheme = AuthenticationSchemeConstants.GrantTypesAuthenticationScheme;
-                })
-                .AddScheme<GrantTypesAuthenticationSchemeOptions, GrantTypesAuthenticationHandler>(
-                    AuthenticationSchemeConstants.GrantTypesAuthenticationScheme, op => { });
-            services
-                .AddAuthorization(options =>
-                {
-                    options.AddPolicy("GrantTypeAuthorization", policy =>
-                        policy.Requirements.Add(new GrantTypesAuthorizationRequirement()));
-                });
+            //services
+            //    .AddAuthentication(options =>
+            //    {
+            //        options.DefaultScheme = AuthenticationSchemeConstants.GrantTypesAuthenticationScheme;
+            //    })
+            //    .AddScheme<GrantTypesAuthenticationSchemeOptions, GrantTypesAuthenticationHandler>(
+            //        AuthenticationSchemeConstants.GrantTypesAuthenticationScheme, op => { });
+            //services
+            //    .AddAuthorization(options =>
+            //    {
+            //        options.AddPolicy("GrantTypeAuthorization", policy =>
+            //            policy.Requirements.Add(new GrantTypesAuthorizationRequirement()));
+            //    });
             services.AddScoped<IAuthorizationHandler, GrantTypesAuthorizationHandler>();
+            services.AddControllersWithViews();
+            services.AddRazorPages();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -116,14 +118,22 @@ namespace ScuffedAuth
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ScuffedAuth v1"));
             }
 
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app
-                .UseEndpoints(endpoints =>
-                {
-                    endpoints.MapControllers();
-                });
+            //app
+            //    .UseEndpoints(endpoints =>
+            //    {
+            //        endpoints.MapControllers();
+            //    });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
+            });
         }
     }
 }

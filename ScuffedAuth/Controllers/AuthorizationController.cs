@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ScuffedAuth.Middlewares.Authentication;
 using ScuffedAuth.Requests;
+using System.Net;
 using System.Threading.Tasks;
 using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
 using TokenEndpoint = Authorization.TokenEndpoint;
@@ -90,6 +91,12 @@ namespace ScuffedAuth.Controllers
             if (!response.Success)
             {
                 return BadRequest(response.Message);
+            }
+
+            if (User?.Identity?.IsAuthenticated != true)
+            {
+                string returnUrl = WebUtility.UrlEncode(HttpContext.Request.Path + HttpContext.Request.QueryString);
+                return Redirect($"/Identity/Account/Login?ReturnUrl={returnUrl}");
             }
 
             var resource = _mapper.Map<AuthorizationEndpoint.AuthorizationCode, AuthorizationEndpoint.AuthorizationCodeResource>(response.AuthorizationCode);
