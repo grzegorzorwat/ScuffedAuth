@@ -60,6 +60,8 @@ namespace ScuffedAuth
                             Array.Empty<string>()
                         }
                     });
+
+                    c.OperationFilter<Swagger.RefererFilter>();
                 });
 
             services.AddAutoMapper(typeof(Startup));
@@ -105,6 +107,7 @@ namespace ScuffedAuth
             //            policy.Requirements.Add(new GrantTypesAuthorizationRequirement()));
             //    });
             services.AddScoped<IAuthorizationHandler, GrantTypesAuthorizationHandler>();
+            services.AddScoped<AuthorizationEndpoint.IAuthorizationCodeAuthentication, HttpBased.AuthorizationCodeAuthentication>();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }

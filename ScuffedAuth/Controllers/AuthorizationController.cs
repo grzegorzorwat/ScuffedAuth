@@ -1,7 +1,9 @@
 ﻿using Authorization.IntrospectionEnpoint;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ScuffedAuth.HttpBased;
 using ScuffedAuth.Middlewares.Authentication;
 using ScuffedAuth.Requests;
 using System.Net;
@@ -83,24 +85,12 @@ namespace ScuffedAuth.Controllers
         [HttpGet]
         [Route("authorize")]
         [Consumes("application/x-www-form-urlencoded")]
+        [ProducesResponseType(StatusCodes.Status302Found)]
         public async Task<ActionResult> Authorize([FromQuery] AuthorizationRequest authorizationRequest)
         {
             var mappedRequest = _mapper.Map<AuthorizationRequest, AuthorizationEndpoint.AuthorizationServiceRequest>(authorizationRequest);
             var response = await _authorizationService.Authorize(mappedRequest);
-
-            if (!response.Success)
-            {
-                return BadRequest(response.Message);
-            }
-
-            if (User?.Identity?.IsAuthenticated != true)
-            {
-                string returnUrl = WebUtility.UrlEncode(HttpContext.Request.Path + HttpContext.Request.QueryString);
-                return Redirect($"/Identity/Account/Login?ReturnUrl={returnUrl}");
-            }
-
-            var resource = _mapper.Map<AuthorizationEndpoint.AuthorizationCode, AuthorizationEndpoint.AuthorizationCodeResource>(response.AuthorizationCode);
-            return Redirect(response.AuthorizationCode.RedirectUri + resource.ToQueryString());
+            return Redirect(response.RedirectTo);
         }
     }
 }

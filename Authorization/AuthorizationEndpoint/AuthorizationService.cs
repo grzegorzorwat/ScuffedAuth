@@ -8,14 +8,17 @@ namespace Authorization.AuthorizationEndpoint
         private readonly IAuthorizationCodeGenerator _authorizationCodeGenerator;
         private readonly IAuthorizationCodesRepository _authorizationCodesRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IAuthorizationCodeAuthentication _authentication;
 
         public AuthorizationService(IAuthorizationCodeGenerator authorizationCodeGenerator,
             IAuthorizationCodesRepository authorizationCodesRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IAuthorizationCodeAuthentication authentication)
         {
             _authorizationCodeGenerator = authorizationCodeGenerator;
             _authorizationCodesRepository = authorizationCodesRepository;
             _unitOfWork = unitOfWork;
+            _authentication = authentication;
         }
 
         public async Task<AuthorizationResponse> Authorize(AuthorizationServiceRequest request)
@@ -24,14 +27,14 @@ namespace Authorization.AuthorizationEndpoint
             {
                 if (request.ResponseType != ResponseType.code)
                 {
-                    return new AuthorizationResponse("unsupported_response_type");
+                    return AuthorizationResponse.WithError(request.Referer, "unsupported_response_type");
                 }
 
                 var client = await _authorizationCodesRepository.GetClientByIdAsync(request.ClientId);
 
                 if (client is null)
                 {
-                    return new AuthorizationResponse("unauthorized_client");
+                    return AuthorizationResponse.WithError(request.Referer, "unauthorized_client");
                 }
 
                 string redirectionUri = request.RedirectUri
@@ -40,17 +43,24 @@ namespace Authorization.AuthorizationEndpoint
 
                 if (IsInvalidRedirectUri(redirectionUri))
                 {
-                    return new AuthorizationResponse("invalid_request");
+                    return AuthorizationResponse.WithError(request.Referer, "invalid_request");
+                }
+
+                var authenticationResponse = _authentication.Authenticate();
+
+                if (authenticationResponse is not null)
+                {
+                    return authenticationResponse;
                 }
 
                 var authorizationCode = _authorizationCodeGenerator.Generate(client.Id, redirectionUri);
                 await _authorizationCodesRepository.AddAuthorizationCode(authorizationCode);
                 await _unitOfWork.Complete();
-                return new AuthorizationResponse(authorizationCode);
+                return AuthorizationResponse.WithCode(redirectionUri, authorizationCode.Code);
             }
             catch
             {
-                return new AuthorizationResponse("An error occurred when getting authorization code.");
+                return AuthorizationResponse.WithError(request.Referer, "server_error");
             }
         }
 

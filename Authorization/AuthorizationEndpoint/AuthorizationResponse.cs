@@ -1,16 +1,40 @@
-﻿namespace Authorization.AuthorizationEndpoint
-{
-    public class AuthorizationResponse : BaseResponse
-    {
-        public AuthorizationCode AuthorizationCode { get; set; }
+﻿using System.Net;
 
-        private AuthorizationResponse(bool success, string message, AuthorizationCode authorizationCode) : base(success, message)
+namespace Authorization.AuthorizationEndpoint
+{
+    public class AuthorizationResponse
+    {
+        private readonly string _redirectUri;
+
+        private readonly string _queryString;
+
+        public AuthorizationResponse(string redirectUri, string queryString)
         {
-            AuthorizationCode = authorizationCode;
+            _redirectUri = redirectUri;
+            _queryString = queryString;
         }
 
-        public AuthorizationResponse(string message) : this(false, message, default!) { }
+        public string RedirectTo
+        {
+            get
+            {
+                return $"{_redirectUri}?{_queryString}";
+            }
+        }
 
-        public AuthorizationResponse(AuthorizationCode token) : this(true, string.Empty, token) { }
+        public static AuthorizationResponse WithError(string uri, string errorMessage)
+        {
+            return WithKeyValue(uri, "error", errorMessage);
+        }
+
+        public static AuthorizationResponse WithCode(string uri, string code)
+        {
+            return WithKeyValue(uri, "code", code);
+        }
+
+        public static AuthorizationResponse WithKeyValue(string uri, string key, string value)
+        {
+            return new AuthorizationResponse(uri, $"{WebUtility.UrlEncode(key)}={WebUtility.UrlEncode(value)}");
+        }
     }
 }

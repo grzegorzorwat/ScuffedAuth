@@ -1,38 +1,32 @@
 ﻿using Authorization.AuthorizationEndpoint;
 using FluentAssertions;
-using Tests.Library;
 
 namespace Authorization.Tests
 {
-    public class AuthorizationResponseAssert : BaseResponseAssert
+    public class AuthorizationResponseAssert
     {
         private readonly AuthorizationResponse _response;
 
-        public AuthorizationResponseAssert(AuthorizationResponse response) : base(response)
+        public AuthorizationResponseAssert(AuthorizationResponse response)
         {
             _response = response;
         }
 
-        public override BaseResponseAssert HasPayloadForFailureResponse(string because = "")
+        public AuthorizationResponseAssert HaveRedirectUrl(string url, string because = "")
         {
-            return HasEmptyAuthorizationCode(because);
-        }
-
-        public AuthorizationResponseAssert HasEmptyAuthorizationCode(string because = "")
-        {
-            _response.AuthorizationCode.Should().BeNull(because);
+            _response.RedirectTo.Split("?")[0].Should().Be(url, because);
             return this;
         }
 
-        public override BaseResponseAssert HasPayloadForSuccessReponse(string because = "")
+        public AuthorizationResponseAssert HaveError(string error, string because = "")
         {
-            return HasAuthorizationCode(because);
+            _response.RedirectTo.Split("?")[1].Should().Be($"error={error}", because);
+            return this;
         }
 
-        public AuthorizationResponseAssert HasAuthorizationCode(string because = "")
+        public AuthorizationResponseAssert HaveCode(string because = "")
         {
-            _response.AuthorizationCode.Should().NotBeNull(because);
-            _response.AuthorizationCode.Code.Should().NotBeEmpty(because);
+            _response.RedirectTo.Split("?")[1].Replace("code=", "").Should().NotBeEmpty(because);
             return this;
         }
     }
