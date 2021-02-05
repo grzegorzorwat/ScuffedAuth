@@ -28,6 +28,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Authentication\Authentication.csproj" />
     <ProjectReference Include="..\Authorization\Authorization.csproj" />
+    <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj" />
     <ProjectReference Include="..\Identity.DAL\Identity.DAL.csproj" />
   </ItemGroup>
 

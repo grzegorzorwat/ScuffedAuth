@@ -1,10 +1,7 @@
 ﻿using Authorization.AuthorizationEndpoint;
+using BaseLibrary.Responses;
 using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace ScuffedAuth.HttpBased
 {
@@ -17,7 +14,7 @@ namespace ScuffedAuth.HttpBased
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public AuthorizationResponse Authenticate()
+        public Response Authenticate()
         {
             if (_httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated != true)
             {
@@ -25,8 +22,9 @@ namespace ScuffedAuth.HttpBased
 
                 if(request != null)
                 {
-                    string returnUrl = WebUtility.UrlEncode(request.Path + request.QueryString);
-                    return AuthorizationResponse.WithKeyValue("/Identity/Account/Login", "ReturnUrl", returnUrl);
+                    return RedirectResponseFactory.With("/Identity/Account/Login",
+                        "ReturnUrl",
+                        $"{request.Path}{request.QueryString}");
                 }
 
                 throw new Exception("Could not authenticate based on HttpContext");

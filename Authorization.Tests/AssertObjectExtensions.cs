@@ -1,13 +1,12 @@
-﻿using Authorization.AuthorizationEndpoint;
-using Tests.Library;
+﻿using BaseLibrary.Responses;
 
 namespace Authorization.Tests
 {
     public static class AssertObjectExtensions
     {
-        public static AuthorizationResponseAssert Should(this AuthorizationResponse response)
+        public static ResponseAssert Should(this Response response)
         {
-            return new AuthorizationResponseAssert(response);
+            return new ResponseAssert(response);
         }
     }
 }

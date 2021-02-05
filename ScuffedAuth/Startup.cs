@@ -4,14 +4,17 @@ using Authorization;
 using Authorization.IntrospectionEnpoint;
 using Authorization.TokenEndpoint;
 using AutoMapper;
+using BaseLibrary.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using ScuffedAuth.HttpBased;
 using ScuffedAuth.Middlewares.Authentication;
 using ScuffedAuth.Middlewares.Authorization;
 using ScuffedAuth.Persistance;
@@ -107,7 +110,8 @@ namespace ScuffedAuth
             //            policy.Requirements.Add(new GrantTypesAuthorizationRequirement()));
             //    });
             services.AddScoped<IAuthorizationHandler, GrantTypesAuthorizationHandler>();
-            services.AddScoped<AuthorizationEndpoint.IAuthorizationCodeAuthentication, HttpBased.AuthorizationCodeAuthentication>();
+            services.AddScoped<AuthorizationEndpoint.IAuthorizationCodeAuthentication, AuthorizationCodeAuthentication>();
+            services.AddScoped<IResponseVisitor<IActionResult>, ResponseActionResultVisitor>();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }

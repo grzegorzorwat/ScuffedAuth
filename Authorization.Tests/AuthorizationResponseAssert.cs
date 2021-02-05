@@ -1,32 +1,38 @@
-﻿using Authorization.AuthorizationEndpoint;
+﻿using BaseLibrary.Responses;
 using FluentAssertions;
+using Tests.Library;
 
 namespace Authorization.Tests
 {
-    public class AuthorizationResponseAssert
+    public class ResponseAssert
     {
-        private readonly AuthorizationResponse _response;
+        private readonly Response _response;
+        private readonly IResponseVisitor<string> _testResponseVisitor;
 
-        public AuthorizationResponseAssert(AuthorizationResponse response)
+        public ResponseAssert(Response response)
         {
             _response = response;
+            _testResponseVisitor = new TestResponseVisitor();
         }
 
-        public AuthorizationResponseAssert HaveRedirectUrl(string url, string because = "")
+        public ResponseAssert HaveRedirectUrl(string url, string because = "")
         {
-            _response.RedirectTo.Split("?")[0].Should().Be(url, because);
+            string redirectTo = _response.Accept(_testResponseVisitor);
+            redirectTo.Split("?")[0].Should().Be(url, because);
             return this;
         }
 
-        public AuthorizationResponseAssert HaveError(string error, string because = "")
+        public ResponseAssert HaveError(string error, string because = "")
         {
-            _response.RedirectTo.Split("?")[1].Should().Be($"error={error}", because);
+            string redirectTo = _response.Accept(_testResponseVisitor);
+            redirectTo.Split("?")[1].Should().Be($"error={error}", because);
             return this;
         }
 
-        public AuthorizationResponseAssert HaveCode(string because = "")
+        public ResponseAssert HaveCode(string because = "")
         {
-            _response.RedirectTo.Split("?")[1].Replace("code=", "").Should().NotBeEmpty(because);
+            string redirectTo = _response.Accept(_testResponseVisitor);
+            redirectTo.Split("?")[1].Replace("code=", "").Should().NotBeEmpty(because);
             return this;
         }
     }

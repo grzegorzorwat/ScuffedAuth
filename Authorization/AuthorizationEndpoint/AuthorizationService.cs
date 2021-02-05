@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BaseLibrary.Responses;
+using System;
 using System.Threading.Tasks;
 
 namespace Authorization.AuthorizationEndpoint
@@ -21,20 +22,20 @@ namespace Authorization.AuthorizationEndpoint
             _authentication = authentication;
         }
 
-        public async Task<AuthorizationResponse> Authorize(AuthorizationServiceRequest request)
+        public async Task<Response> Authorize(AuthorizationServiceRequest request)
         {
             try
             {
                 if (request.ResponseType != ResponseType.code)
                 {
-                    return AuthorizationResponse.WithError(request.Referer, "unsupported_response_type");
+                    return RedirectResponseFactory.WithError(request.Referer, "unsupported_response_type");
                 }
 
                 var client = await _authorizationCodesRepository.GetClientByIdAsync(request.ClientId);
 
                 if (client is null)
                 {
-                    return AuthorizationResponse.WithError(request.Referer, "unauthorized_client");
+                    return RedirectResponseFactory.WithError(request.Referer, "unauthorized_client");
                 }
 
                 string redirectionUri = request.RedirectUri
@@ -43,7 +44,7 @@ namespace Authorization.AuthorizationEndpoint
 
                 if (IsInvalidRedirectUri(redirectionUri))
                 {
-                    return AuthorizationResponse.WithError(request.Referer, "invalid_request");
+                    return RedirectResponseFactory.WithError(request.Referer, "invalid_request");
                 }
 
                 var authenticationResponse = _authentication.Authenticate();
@@ -56,11 +57,11 @@ namespace Authorization.AuthorizationEndpoint
                 var authorizationCode = _authorizationCodeGenerator.Generate(client.Id, redirectionUri);
                 await _authorizationCodesRepository.AddAuthorizationCode(authorizationCode);
                 await _unitOfWork.Complete();
-                return AuthorizationResponse.WithCode(redirectionUri, authorizationCode.Code);
+                return RedirectResponseFactory.With(redirectionUri, "code", authorizationCode.Code);
             }
             catch
             {
-                return AuthorizationResponse.WithError(request.Referer, "server_error");
+                return RedirectResponseFactory.WithError(request.Referer, "server_error");
             }
         }
 

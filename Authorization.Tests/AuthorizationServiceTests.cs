@@ -1,7 +1,9 @@
 ﻿using Authorization.AuthorizationEndpoint;
 using Authorization.Codes;
+using BaseLibrary.Responses;
 using Microsoft.Extensions.Options;
 using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -21,7 +23,7 @@ namespace Authorization.Tests
                 ResponseType = ResponseType.unidentified
             }.Build();
 
-            AuthorizationResponse response = await service.Authorize(request);
+            Response response = await service.Authorize(request);
 
             response.Should().HaveError("unsupported_response_type");
         }
@@ -35,7 +37,7 @@ namespace Authorization.Tests
                 ClientId = "NotExistingClientId"
             }.Build();
 
-            AuthorizationResponse response = await service.Authorize(request);
+            Response response = await service.Authorize(request);
 
             response.Should().HaveError("unauthorized_client");
         }
@@ -46,7 +48,7 @@ namespace Authorization.Tests
             IAuthorizationService service = GetAuthorizationService();
             AuthorizationServiceRequest request = new TestAuthorizationRequestBuilder().Build();
 
-            AuthorizationResponse response = await service.Authorize(request);
+            Response response = await service.Authorize(request);
 
             response.Should().HaveCode();
         }
@@ -60,7 +62,7 @@ namespace Authorization.Tests
                 RedirectUri = null
             }.Build();
 
-            AuthorizationResponse response = await service.Authorize(request);
+            Response response = await service.Authorize(request);
 
             response.Should().HaveError("invalid_request");
         }
@@ -75,7 +77,7 @@ namespace Authorization.Tests
                 RedirectUri = null
             }.Build();
 
-            AuthorizationResponse response = await service.Authorize(request);
+            Response response = await service.Authorize(request);
 
             response.Should().HaveRedirectUrl(ExampleUri);
         }
@@ -90,7 +92,7 @@ namespace Authorization.Tests
                 RedirectUri = ExampleUri
             }.Build();
 
-            AuthorizationResponse response = await service.Authorize(request);
+            Response response = await service.Authorize(request);
 
             response.Should().HaveRedirectUrl(ExampleUri);
         }
@@ -105,7 +107,7 @@ namespace Authorization.Tests
                 RedirectUri = OtherExampleUri
             }.Build();
 
-            AuthorizationResponse response = await service.Authorize(request);
+            Response response = await service.Authorize(request);
 
             response.Should().HaveRedirectUrl(OtherExampleUri);
         }
@@ -123,7 +125,7 @@ namespace Authorization.Tests
                 RedirectUri = invalidRedirectUri
             }.Build();
 
-            AuthorizationResponse response = await service.Authorize(request);
+            Response response = await service.Authorize(request);
 
             response.Should().HaveError("invalid_request", because + " was passed");
         }
@@ -133,7 +135,7 @@ namespace Authorization.Tests
         {
             AuthorizationServiceRequest request = new TestAuthorizationRequestBuilder().Build();
             var authenticator = Substitute.For<IAuthorizationCodeAuthentication>();
-            var expectedResponse = AuthorizationResponse.WithKeyValue(ExampleUri, "ReturnUri", OtherExampleUri);
+            var expectedResponse = RedirectResponseFactory.With(ExampleUri, "ReturnUri", OtherExampleUri);
             authenticator.Authenticate().Returns(expectedResponse);
             var service = GetAuthorizationService(authenticator: authenticator);
 
@@ -146,8 +148,14 @@ namespace Authorization.Tests
             IAuthorizationCodeAuthentication authenticator = default!)
         {
             var client = clientToSave ?? new Client("ClientId");
-            var authorizationCodeAuthentication = authenticator
-                ?? Substitute.For<IAuthorizationCodeAuthentication>();
+            var authorizationCodeAuthentication = authenticator;
+
+            if(authorizationCodeAuthentication is null)
+            {
+                authorizationCodeAuthentication = Substitute.For<IAuthorizationCodeAuthentication>();
+                authorizationCodeAuthentication.Authenticate().ReturnsNull();
+            }
+
             IAuthorizationCodesRepository repository = Substitute.For<IAuthorizationCodesRepository>();
             repository.GetClientByIdAsync(client.Id).Returns(client);
             var settings = Options.Create(new ExpiringCodesGeneratorSettings()

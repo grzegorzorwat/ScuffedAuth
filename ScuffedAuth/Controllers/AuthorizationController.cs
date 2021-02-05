@@ -1,12 +1,12 @@
 ﻿using Authorization.IntrospectionEnpoint;
 using AutoMapper;
+using BaseLibrary.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ScuffedAuth.HttpBased;
 using ScuffedAuth.Middlewares.Authentication;
 using ScuffedAuth.Requests;
-using System.Net;
 using System.Threading.Tasks;
 using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
 using TokenEndpoint = Authorization.TokenEndpoint;
@@ -22,18 +22,21 @@ namespace ScuffedAuth.Controllers
         private readonly IIntrospectionService _introspectionService;
         private readonly AuthorizationEndpoint.IAuthorizationService _authorizationService;
         private readonly IAuthorizationService _authorization;
+        private readonly IResponseVisitor<IActionResult> _responseActionResultVisitor;
 
         public AuthorizationController(TokenEndpoint.ITokenService tokenService,
             IMapper mapper,
             IIntrospectionService introspectionService,
             AuthorizationEndpoint.IAuthorizationService authorizationService,
-            IAuthorizationService authorization)
+            IAuthorizationService authorization,
+            IResponseVisitor<IActionResult> responseActionResultVisitor)
         {
             _tokenService = tokenService;
             _mapper = mapper;
             _introspectionService = introspectionService;
             _authorizationService = authorizationService;
             _authorization = authorization;
+            _responseActionResultVisitor = responseActionResultVisitor;
         }
 
         [HttpPost]
@@ -86,11 +89,11 @@ namespace ScuffedAuth.Controllers
         [Route("authorize")]
         [Consumes("application/x-www-form-urlencoded")]
         [ProducesResponseType(StatusCodes.Status302Found)]
-        public async Task<ActionResult> Authorize([FromQuery] AuthorizationRequest authorizationRequest)
+        public async Task<IActionResult> Authorize([FromQuery] AuthorizationRequest authorizationRequest)
         {
             var mappedRequest = _mapper.Map<AuthorizationRequest, AuthorizationEndpoint.AuthorizationServiceRequest>(authorizationRequest);
             var response = await _authorizationService.Authorize(mappedRequest);
-            return Redirect(response.RedirectTo);
+            return response.Accept(_responseActionResultVisitor);
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿namespace Authorization.AuthorizationEndpoint
+﻿using BaseLibrary.Responses;
+
+namespace Authorization.AuthorizationEndpoint
 {
     public interface IAuthorizationCodeAuthentication
     {
-        AuthorizationResponse? Authenticate();
+        Response? Authenticate();
     }
 }
