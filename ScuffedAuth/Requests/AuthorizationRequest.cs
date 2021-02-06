@@ -17,8 +17,5 @@ namespace ScuffedAuth.Requests
 
         [FromQuery(Name = "redirect_uri")]
         public string? RedirectUri { get; set; }
-
-        [FromHeader(Name = "Referer")]
-        public string? Referer { get; set; }
     }
 }

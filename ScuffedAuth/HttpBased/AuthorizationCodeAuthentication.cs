@@ -22,7 +22,7 @@ namespace ScuffedAuth.HttpBased
 
                 if(request != null)
                 {
-                    return RedirectResponseFactory.With("/Identity/Account/Login",
+                    return ResponseFactory.With("/Identity/Account/Login",
                         "ReturnUrl",
                         $"{request.Path}{request.QueryString}");
                 }

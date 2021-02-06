@@ -4,7 +4,6 @@ using BaseLibrary.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ScuffedAuth.HttpBased;
 using ScuffedAuth.Middlewares.Authentication;
 using ScuffedAuth.Requests;
 using System.Threading.Tasks;
@@ -22,14 +21,14 @@ namespace ScuffedAuth.Controllers
         private readonly IIntrospectionService _introspectionService;
         private readonly AuthorizationEndpoint.IAuthorizationService _authorizationService;
         private readonly IAuthorizationService _authorization;
-        private readonly IResponseVisitor<IActionResult> _responseActionResultVisitor;
+        private readonly IResponseVisitor<ActionResult> _responseActionResultVisitor;
 
         public AuthorizationController(TokenEndpoint.ITokenService tokenService,
             IMapper mapper,
             IIntrospectionService introspectionService,
             AuthorizationEndpoint.IAuthorizationService authorizationService,
             IAuthorizationService authorization,
-            IResponseVisitor<IActionResult> responseActionResultVisitor)
+            IResponseVisitor<ActionResult> responseActionResultVisitor)
         {
             _tokenService = tokenService;
             _mapper = mapper;
@@ -88,8 +87,9 @@ namespace ScuffedAuth.Controllers
         [HttpGet]
         [Route("authorize")]
         [Consumes("application/x-www-form-urlencoded")]
+        [Produces("application/x-www-form-urlencoded")]
         [ProducesResponseType(StatusCodes.Status302Found)]
-        public async Task<IActionResult> Authorize([FromQuery] AuthorizationRequest authorizationRequest)
+        public async Task<ActionResult> Authorize([FromQuery] AuthorizationRequest authorizationRequest)
         {
             var mappedRequest = _mapper.Map<AuthorizationRequest, AuthorizationEndpoint.AuthorizationServiceRequest>(authorizationRequest);
             var response = await _authorizationService.Authorize(mappedRequest);

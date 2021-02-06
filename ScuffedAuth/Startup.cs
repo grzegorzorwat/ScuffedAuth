@@ -111,7 +111,7 @@ namespace ScuffedAuth
             //    });
             services.AddScoped<IAuthorizationHandler, GrantTypesAuthorizationHandler>();
             services.AddScoped<AuthorizationEndpoint.IAuthorizationCodeAuthentication, AuthorizationCodeAuthentication>();
-            services.AddScoped<IResponseVisitor<IActionResult>, ResponseActionResultVisitor>();
+            services.AddScoped<IResponseVisitor<ActionResult>, ResponseActionResultVisitor>();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }

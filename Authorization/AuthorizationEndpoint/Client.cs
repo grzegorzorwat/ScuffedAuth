@@ -10,11 +10,11 @@
         public Client(string id, string? redirectionUri)
         {
             Id = id;
-            RedirectionUri = redirectionUri;
+            RedirectUri = redirectionUri;
         }
 
         public string Id { get; }
 
-        public string? RedirectionUri { get; }
+        public string? RedirectUri { get; }
     }
 }

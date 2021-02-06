@@ -25,7 +25,7 @@ namespace Authorization.Tests
 
             Response response = await service.Authorize(request);
 
-            response.Should().HaveError("unsupported_response_type");
+            response.AsRedirectResponse().Should().HaveError("unsupported_response_type");
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace Authorization.Tests
 
             Response response = await service.Authorize(request);
 
-            response.Should().HaveError("unauthorized_client");
+            response.AsAuthorizationErrorResponse().Should().HaveError("unauthorized_client");
         }
 
         [Fact]
@@ -48,9 +48,9 @@ namespace Authorization.Tests
             IAuthorizationService service = GetAuthorizationService();
             AuthorizationServiceRequest request = new TestAuthorizationRequestBuilder().Build();
 
-            Response response = await service.Authorize(request);
+            Response response = (RedirectResponse)await service.Authorize(request);
 
-            response.Should().HaveCode();
+            response.AsRedirectResponse().Should().HaveCode();
         }
 
         [Fact]
@@ -64,7 +64,7 @@ namespace Authorization.Tests
 
             Response response = await service.Authorize(request);
 
-            response.Should().HaveError("invalid_request");
+            response.AsAuthorizationErrorResponse().Should().HaveError("invalid_request");
         }
 
         [Fact]
@@ -79,7 +79,7 @@ namespace Authorization.Tests
 
             Response response = await service.Authorize(request);
 
-            response.Should().HaveRedirectUrl(ExampleUri);
+            response.AsRedirectResponse().Should().HaveRedirectUrl(ExampleUri);
         }
 
         [Fact]
@@ -94,7 +94,7 @@ namespace Authorization.Tests
 
             Response response = await service.Authorize(request);
 
-            response.Should().HaveRedirectUrl(ExampleUri);
+            response.AsRedirectResponse().Should().HaveRedirectUrl(ExampleUri);
         }
 
         [Fact]
@@ -109,7 +109,7 @@ namespace Authorization.Tests
 
             Response response = await service.Authorize(request);
 
-            response.Should().HaveRedirectUrl(OtherExampleUri);
+            response.AsRedirectResponse().Should().HaveRedirectUrl(OtherExampleUri);
         }
 
         [Theory]
@@ -127,7 +127,7 @@ namespace Authorization.Tests
 
             Response response = await service.Authorize(request);
 
-            response.Should().HaveError("invalid_request", because + " was passed");
+            response.AsAuthorizationErrorResponse().Should().HaveError("invalid_request", because + " was passed");
         }
 
         [Fact]
@@ -135,7 +135,7 @@ namespace Authorization.Tests
         {
             AuthorizationServiceRequest request = new TestAuthorizationRequestBuilder().Build();
             var authenticator = Substitute.For<IAuthorizationCodeAuthentication>();
-            var expectedResponse = RedirectResponseFactory.With(ExampleUri, "ReturnUri", OtherExampleUri);
+            var expectedResponse = ResponseFactory.With(ExampleUri, "ReturnUri", OtherExampleUri);
             authenticator.Authenticate().Returns(expectedResponse);
             var service = GetAuthorizationService(authenticator: authenticator);
 
@@ -179,7 +179,7 @@ namespace Authorization.Tests
 
             public AuthorizationServiceRequest Build()
             {
-                return new AuthorizationServiceRequest(ResponseType, ClientId, RedirectUri, string.Empty);
+                return new AuthorizationServiceRequest(ResponseType, ClientId, RedirectUri);
             }
         }
     }
