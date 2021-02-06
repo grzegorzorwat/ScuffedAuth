@@ -26,7 +26,7 @@ namespace Authentication
 
         public static IAuthenticator GetClientCredentialsAuthorization(this IServiceProvider serviceProvider)
         {
-            return (IAuthenticator)serviceProvider.GetRequiredService(typeof(ClientCredentialsAuthenticator));
+            return serviceProvider.GetRequiredService<ClientCredentialsAuthenticator>();
         }
     }
 }

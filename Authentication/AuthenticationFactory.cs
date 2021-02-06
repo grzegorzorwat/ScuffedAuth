@@ -9,8 +9,6 @@ namespace Authentication
     {
         private readonly IServiceProvider _serviceProvider = default!;
 
-        protected AuthenticationFactory() { }
-
         public AuthenticationFactory(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
@@ -20,9 +18,9 @@ namespace Authentication
         {
             return grantType switch
             {
-                GrantTypes.client_credentials => (IAuthenticator)_serviceProvider.GetRequiredService(typeof(ClientCredentialsAuthenticator)),
+                GrantTypes.client_credentials => _serviceProvider.GetRequiredService<ClientCredentialsAuthenticator>(),
                 GrantTypes.authorization_code => _serviceProvider.GetRequiredService<PassThroughAuthenticator>(),
-                _ => (IAuthenticator)_serviceProvider.GetRequiredService(typeof(UnidentifiedAuthentication))
+                _ => _serviceProvider.GetRequiredService<UnidentifiedAuthentication>()
             };
         }
     }
