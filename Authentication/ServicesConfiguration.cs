@@ -6,7 +6,7 @@ namespace Authentication
 {
     public static class ServicesConfiguration
     {
-        public static void AddAuthentication(this IServiceCollection services)
+        public static void AddAuthenticaticators(this IServiceCollection services)
         {
             services.AddScoped<AuthenticationFactory>();
             services

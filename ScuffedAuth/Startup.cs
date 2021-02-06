@@ -35,7 +35,6 @@ namespace ScuffedAuth
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddControllers();
             services
                 .AddSwaggerGen(c =>
                 {
@@ -92,23 +91,20 @@ namespace ScuffedAuth
             services.AddScoped<AuthorizationEndpoint.IAuthorizationCodeGenerator, AuthorizationEndpoint.AuthorizationCodeGenerator>();
             services.AddScoped<AuthorizationCode.IAuthorizationCodesRepository, AuthorizationCodesRepository>();
 
-            ServicesConfiguration.AddAuthentication(services);
+            services.AddAuthenticaticators();
             services.RegisterAuthorization();
 
             services.AddHttpContextAccessor();
-            //services
-            //    .AddAuthentication(options =>
-            //    {
-            //        options.DefaultScheme = AuthenticationSchemeConstants.GrantTypesAuthenticationScheme;
-            //    })
-            //    .AddScheme<GrantTypesAuthenticationSchemeOptions, GrantTypesAuthenticationHandler>(
-            //        AuthenticationSchemeConstants.GrantTypesAuthenticationScheme, op => { });
-            //services
-            //    .AddAuthorization(options =>
-            //    {
-            //        options.AddPolicy("GrantTypeAuthorization", policy =>
-            //            policy.Requirements.Add(new GrantTypesAuthorizationRequirement()));
-            //    });
+            services
+                .AddAuthentication()
+                .AddScheme<GrantTypesAuthenticationSchemeOptions, GrantTypesAuthenticationHandler>(
+                    AuthenticationSchemeConstants.GrantTypesAuthenticationScheme, op => { });
+            services
+                .AddAuthorization(options =>
+                {
+                    options.AddPolicy("GrantTypeAuthorization", policy =>
+                        policy.Requirements.Add(new GrantTypesAuthorizationRequirement()));
+                });
             services.AddScoped<IAuthorizationHandler, GrantTypesAuthorizationHandler>();
             services.AddScoped<AuthorizationEndpoint.IAuthorizationCodeAuthentication, AuthorizationCodeAuthentication>();
             services.AddScoped<IResponseVisitor<ActionResult>, ResponseActionResultVisitor>();
