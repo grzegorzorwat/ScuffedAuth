@@ -15,14 +15,14 @@ namespace ScuffedAuth.Middlewares.Authentication
             _services = services;
         }
 
+        public AuthenticateResult VisitErrorResponse(ErrorResponse response)
+        {
+            return AuthenticateResult.Fail(response.Message);
+        }
+
         public AuthenticateResult VisitErrorResponse<PayloadType>(ErrorResponse<PayloadType> response)
         {
             return AuthenticateResult.Fail(response.Payload?.ToString() ?? "Failed to authenticate.");
-        }
-
-        public AuthenticateResult VisitErrorResponse(ErrorResponse<string> response)
-        {
-            return AuthenticateResult.Fail(response.Payload);
         }
 
         public AuthenticateResult VisitRedirectResponse(RedirectResponse response)

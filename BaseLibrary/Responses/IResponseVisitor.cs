@@ -4,6 +4,8 @@
     {
         T VisitRedirectResponse(RedirectResponse response);
 
+        T VisitErrorResponse(ErrorResponse response);
+
         T VisitErrorResponse<PayloadType>(ErrorResponse<PayloadType> response);
 
         T VisitSuccessResponse(SuccessResponse response);

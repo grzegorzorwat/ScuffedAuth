@@ -1,4 +1,5 @@
 ﻿using Authorization.TokenEndpoint;
+using BaseLibrary.Responses;
 using System;
 using System.Threading.Tasks;
 
@@ -13,21 +14,21 @@ namespace Authorization.IntrospectionEnpoint
             _tokenRepository = tokenRepository;
         }
 
-        public async Task<IntrospectionResponse> Introspect(IntrospectionRequest request)
+        public async Task<Response> Introspect(IntrospectionRequest request)
         {
             if (string.IsNullOrEmpty(request.Token))
             {
-                return new IntrospectionResponse("Invalid parameters");
+                return new ErrorResponse("Invalid parameters");
             }
 
             var token = await _tokenRepository.GetToken(request.Token);
 
             if (token?.CreationDate.Add(token.ExpiresIn) > DateTime.UtcNow)
             {
-                return new IntrospectionResponse(new TokenInfo(request.Token, true));
+                return new SuccessResponse<TokenInfoResource>(new TokenInfoResource(true));
             }
 
-            return new IntrospectionResponse(new TokenInfo(request.Token, false));
+            return new SuccessResponse<TokenInfoResource>(new TokenInfoResource(false));
         }
     }
 }

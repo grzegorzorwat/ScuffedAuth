@@ -74,14 +74,7 @@ namespace ScuffedAuth.Controllers
         public async Task<ActionResult> Introspect([FromQuery] IntrospectionRequest introspectionRequest)
         {
             var response = await _introspectionService.Introspect(introspectionRequest);
-
-            if (!response.Success)
-            {
-                return BadRequest(response.Message);
-            }
-
-            var resource = _mapper.Map<TokenInfo, TokenInfoResource>(response.TokenInfo);
-            return Ok(resource);
+            return response.Accept(_responseActionResultVisitor);
         }
 
         [HttpGet]

@@ -1,5 +1,6 @@
 ﻿using Authorization.IntrospectionEnpoint;
 using Authorization.TokenEndpoint;
+using BaseLibrary.Responses;
 using FluentAssertions;
 using NSubstitute;
 using System;
@@ -25,8 +26,8 @@ namespace ScuffedAuth.Tests
 
             var response = await service.Introspect(request);
 
-            response.Success.Should().BeTrue();
-            response.TokenInfo.Active.Should().BeTrue();
+            response.Should().BeOfType<SuccessResponse<TokenInfoResource>>();
+            response.As<SuccessResponse<TokenInfoResource>>().Payload.Active.Should().BeTrue();
         }
 
         [Fact]
@@ -43,8 +44,8 @@ namespace ScuffedAuth.Tests
 
             var response = await service.Introspect(request);
 
-            response.Success.Should().BeTrue();
-            response.TokenInfo.Active.Should().BeFalse();
+            response.Should().BeOfType<SuccessResponse<TokenInfoResource>>();
+            response.As<SuccessResponse<TokenInfoResource>>().Payload.Active.Should().BeFalse();
         }
 
         [Fact]
@@ -58,8 +59,8 @@ namespace ScuffedAuth.Tests
 
             var response = await service.Introspect(request);
 
-            response.Success.Should().BeFalse();
-            response.Message.Should().NotBeEmpty();
+            response.Should().BeOfType<ErrorResponse>();
+            response.As<ErrorResponse>().Message.Should().NotBeEmpty();
         }
 
         [Fact]
@@ -73,8 +74,8 @@ namespace ScuffedAuth.Tests
 
             var response = await service.Introspect(request);
 
-            response.Success.Should().BeTrue();
-            response.TokenInfo.Active.Should().BeFalse();
+            response.Should().BeOfType<SuccessResponse<TokenInfoResource>>();
+            response.As<SuccessResponse<TokenInfoResource>>().Payload.Active.Should().BeFalse();
         }
 
         private static Task<Token> AnActiveToken(string token)

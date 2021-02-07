@@ -5,6 +5,11 @@ namespace ScuffedAuth.HttpBased
 {
     public class ResponseActionResultVisitor : IResponseVisitor<ActionResult>
     {
+        public ActionResult VisitErrorResponse(ErrorResponse response)
+        {
+            return new BadRequestObjectResult(response.Message);
+        }
+
         public ActionResult VisitErrorResponse<PayloadType>(ErrorResponse<PayloadType> response)
         {
             return new BadRequestObjectResult(response.Payload);
