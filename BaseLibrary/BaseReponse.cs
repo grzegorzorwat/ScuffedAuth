@@ -1,4 +1,4 @@
-﻿namespace Authorization
+﻿namespace BaseLibrary
 {
     public abstract class BaseResponse
     {

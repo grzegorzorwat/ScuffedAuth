@@ -1,4 +1,6 @@
 ﻿using Authentication.ClientCredentials;
+using BaseLibrary.Responses;
+using FluentAssertions;
 using NSubstitute;
 using System.Threading.Tasks;
 using Xunit;
@@ -12,9 +14,9 @@ namespace Authentication.Tests
         {
             IAuthenticator authenticator = GetClientCredentailsAuthenticator();
 
-            AuthenticationResponse response = await authenticator.Authenticate(string.Empty);
+            Response response = await authenticator.Authenticate(string.Empty);
 
-            response.Should().BeFailure();
+            response.ShouldBeFailure();
         }
 
         [Fact]
@@ -23,9 +25,10 @@ namespace Authentication.Tests
             IAuthenticator authenticator = GetClientCredentailsAuthenticator();
             string header = TestHeaders.GetCorrectClientsCredentialsBasicHeader();
 
-            AuthenticationResponse response = await authenticator.Authenticate(header);
+            Response response = await authenticator.Authenticate(header);
 
-            response.Should().BeSuccess();
+            response.Should().BeOfType<SuccessResponse<ResponseClient>>();
+            response.As<SuccessResponse<ResponseClient>>().Payload.Should().NotBeNull();
         }
 
         [Fact]
@@ -34,9 +37,9 @@ namespace Authentication.Tests
             IAuthenticator authenticator = GetClientCredentailsAuthenticator();
             string header = TestHeaders.CreateBasicHeader("incorrectClientId", "incorrectClientSecret");
 
-            AuthenticationResponse response = await authenticator.Authenticate(header);
+            Response response = await authenticator.Authenticate(header);
 
-            response.Should().BeFailure();
+            response.ShouldBeFailure();
         }
 
         [Fact]
@@ -45,9 +48,9 @@ namespace Authentication.Tests
             IAuthenticator authenticator = GetClientCredentailsAuthenticator();
             string header = TestHeaders.CreateBasicHeader(TestHeaders.ClientId, "incorrectClientSecret");
 
-            AuthenticationResponse response = await authenticator.Authenticate(header);
+            Response response = await authenticator.Authenticate(header);
 
-            response.Should().BeFailure();
+            response.ShouldBeFailure();
         }
 
         [Theory]
@@ -59,9 +62,9 @@ namespace Authentication.Tests
                 clientsRepository,
                 new SecretVerifier());
 
-            AuthenticationResponse response = await authenticator.Authenticate(incorrectHeader);
+            Response response = await authenticator.Authenticate(incorrectHeader);
 
-            response.Should().BeFailure(because + " was passed");
+            response.ShouldBeFailure(because + " was passed");
         }
 
         [Fact]
@@ -69,9 +72,9 @@ namespace Authentication.Tests
         {
             IAuthenticator authenticator = GetClientCredentailsAuthenticator();
 
-            AuthenticationResponse response = await authenticator.Authenticate(null);
+            Response response = await authenticator.Authenticate(null);
 
-            response.Should().BeFailure();
+            response.ShouldBeFailure();
         }
 
         private static IAuthenticator GetClientCredentailsAuthenticator()

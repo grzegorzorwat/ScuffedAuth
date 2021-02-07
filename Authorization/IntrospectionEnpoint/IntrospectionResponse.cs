@@ -1,4 +1,6 @@
-﻿namespace Authorization.IntrospectionEnpoint
+﻿using BaseLibrary;
+
+namespace Authorization.IntrospectionEnpoint
 {
     public class IntrospectionResponse : BaseResponse
     {

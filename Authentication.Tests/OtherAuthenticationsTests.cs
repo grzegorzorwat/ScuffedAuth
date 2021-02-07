@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using BaseLibrary.Responses;
+using FluentAssertions;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -11,9 +12,9 @@ namespace Authentication.Tests
         {
             IAuthenticator authenticator = new UnidentifiedAuthentication();
 
-            AuthenticationResponse response = await authenticator.Authenticate(string.Empty);
+            ErrorResponse<string> response = (ErrorResponse<string>)await authenticator.Authenticate(string.Empty);
 
-            response.Should().BeFailure();
+            response.Payload.Should().NotBeEmpty();
         }
 
         [Fact]
@@ -21,9 +22,9 @@ namespace Authentication.Tests
         {
             IAuthenticator authenticator = new PassThroughAuthenticator();
 
-            AuthenticationResponse response = await authenticator.Authenticate(string.Empty);
+            Response response = await authenticator.Authenticate(string.Empty);
 
-            response.Success.Should().BeTrue();
+            response.Should().BeOfType<SuccessResponse>();
         }
     }
 }

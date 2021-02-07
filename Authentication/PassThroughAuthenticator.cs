@@ -1,12 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using BaseLibrary.Responses;
+using System.Threading.Tasks;
 
 namespace Authentication
 {
     internal class PassThroughAuthenticator : IAuthenticator
     {
-        public Task<AuthenticationResponse> Authenticate(string authorizationHeader)
+        public Task<Response> Authenticate(string authorizationHeader)
         {
-            return Task.FromResult(new AuthenticationResponse(new ResponseClient(string.Empty)));
+            return Task.FromResult((Response)new SuccessResponse());
         }
     }
 }

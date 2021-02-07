@@ -14,5 +14,15 @@ namespace ScuffedAuth.HttpBased
         {
             return new RedirectResult(response.RedirectUrl);
         }
+
+        public ActionResult VisitSuccessResponse(SuccessResponse response)
+        {
+            return new OkResult();
+        }
+
+        public ActionResult VisitSuccessResponse<PayloadType>(SuccessResponse<PayloadType> response)
+        {
+            return new OkObjectResult(response.Payload);
+        }
     }
 }

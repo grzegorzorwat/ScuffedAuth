@@ -5,6 +5,7 @@ using Authorization.IntrospectionEnpoint;
 using Authorization.TokenEndpoint;
 using AutoMapper;
 using BaseLibrary.Responses;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -108,6 +109,8 @@ namespace ScuffedAuth
             services.AddScoped<IAuthorizationHandler, GrantTypesAuthorizationHandler>();
             services.AddScoped<AuthorizationEndpoint.IAuthorizationCodeAuthentication, AuthorizationCodeAuthentication>();
             services.AddScoped<IResponseVisitor<ActionResult>, ResponseActionResultVisitor>();
+            services.AddScoped<IResponseVisitor<AuthenticateResult>, ResponseAuthenticateResultVisitor>();
+            services.AddScoped<IClaimsMapper<ResponseClient>, Middlewares.Authentication.ClaimsMapper>();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }

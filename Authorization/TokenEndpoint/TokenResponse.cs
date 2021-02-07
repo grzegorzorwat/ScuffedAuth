@@ -1,4 +1,6 @@
-﻿namespace Authorization.TokenEndpoint
+﻿using BaseLibrary;
+
+namespace Authorization.TokenEndpoint
 {
     public class TokenResponse : BaseResponse
     {

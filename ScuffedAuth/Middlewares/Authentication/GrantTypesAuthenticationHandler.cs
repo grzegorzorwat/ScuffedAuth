@@ -1,5 +1,6 @@
 ﻿using Authentication;
 using Authorization;
+using BaseLibrary.Responses;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -16,16 +17,19 @@ namespace ScuffedAuth.Middlewares.Authentication
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly AuthenticationFactory _authenticationFactory;
+        private readonly IResponseVisitor<AuthenticateResult> _responseAuthenticateResultVisitor;
 
         public GrantTypesAuthenticationHandler(IOptionsMonitor<GrantTypesAuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock,
             IHttpContextAccessor httpContextAccessor,
-            AuthenticationFactory authorizationFactory) : base(options, logger, encoder, clock)
+            AuthenticationFactory authorizationFactory,
+            IResponseVisitor<AuthenticateResult> responseAuthenticateResultVisitor) : base(options, logger, encoder, clock)
         {
             _httpContextAccessor = httpContextAccessor;
             _authenticationFactory = authorizationFactory;
+            _responseAuthenticateResultVisitor = responseAuthenticateResultVisitor;
         }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -39,18 +43,7 @@ namespace ScuffedAuth.Middlewares.Authentication
                     var grantType = GetGrantType();
                     var authorization = _authenticationFactory.GetAuthentication(grantType);
                     var response = await authorization.Authenticate(httpContext.Request.Headers[HeaderNames.Authorization]);
-
-                    if (response.Success)
-                    {
-                        var claims = new[]
-                        {
-                                new Claim(ClaimTypes.NameIdentifier, response.Client.Id)
-                        };
-                        var claimsIdentity = new ClaimsIdentity(claims, nameof(GrantTypesAuthenticationHandler));
-                        return AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(claimsIdentity), Scheme.Name));
-                    }
-
-                    return AuthenticateResult.Fail(response.Message);
+                    return response.Accept(_responseAuthenticateResultVisitor);
                 }
 
                 return AuthenticateResult.Fail("Failed to authenticate.");
