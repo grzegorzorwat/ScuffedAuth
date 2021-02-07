@@ -33,7 +33,7 @@ namespace Authentication.ClientCredentials
                 }
             }
 
-            return new ErrorResponse<string>("Invalid credentials");
+            return new ErrorResponse("Invalid credentials");
         }
     }
 }

@@ -7,8 +7,8 @@ namespace Authentication.Tests
     {
         public static void ShouldBeFailure(this Response response, string because = "")
         {
-            response.Should().BeOfType<ErrorResponse<string>>(because);
-            response.As<ErrorResponse<string>>().Payload.Should().NotBeEmpty(because);
+            response.Should().BeOfType<ErrorResponse>(because);
+            response.As<ErrorResponse>().Message.Should().NotBeEmpty(because);
         }
 
         public static void ShouldBeSuccess(this Response response, string because = "")
