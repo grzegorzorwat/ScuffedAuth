@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using AutoMapper;
+using BaseLibrary.Responses;
+using System.Threading.Tasks;
 
 namespace Authorization.TokenEndpoint
 {
@@ -7,28 +9,32 @@ namespace Authorization.TokenEndpoint
         private readonly ITokenRepository _tokenRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITokenGenerator _tokenGenerator;
+        private readonly IMapper _mapper;
 
         public TokenService(ITokenRepository tokenRepository,
             IUnitOfWork unitOfWork,
-            ITokenGenerator tokenGenerator)
+            ITokenGenerator tokenGenerator,
+            IMapper mapper)
         {
             _tokenRepository = tokenRepository;
             _unitOfWork = unitOfWork;
             _tokenGenerator = tokenGenerator;
+            _mapper = mapper;
         }
 
-        public async Task<TokenResponse> GetToken(TokenRequest request)
+        public async Task<Response> GetToken(TokenRequest request)
         {
             try
             {
                 var token = _tokenGenerator.Generate();
                 await _tokenRepository.AddToken(token);
                 await _unitOfWork.Complete();
-                return new TokenResponse(token);
+                var resource = _mapper.Map<Token, TokenResource>(token);
+                return new SuccessResponse<TokenResource>(resource);
             }
             catch
             {
-                return new TokenResponse("An error occurred when saving the token.");
+                return new ErrorResponse("An error occurred when saving the token.");
             }
         }
     }

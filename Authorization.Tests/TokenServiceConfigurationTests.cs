@@ -1,5 +1,7 @@
 ﻿using Authorization;
 using Authorization.TokenEndpoint;
+using AutoMapper;
+using BaseLibrary.Responses;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using NSubstitute;
@@ -31,9 +33,10 @@ namespace ScuffedAuth.Tests
                 GrantType = GrantTypes.client_credentials
             };
 
-            TokenResponse response = await service.GetToken(request);
+            Response response = await service.GetToken(request);
 
-            response.Token.ExpiresIn.Should().Be(TimeSpan.FromSeconds(expiresIn));
+            response.Should().BeOfType<SuccessResponse<TokenResource>>();
+            response.As<SuccessResponse<TokenResource>>().Payload.ExpiresIn.Should().Be(expiresIn);
         }
 
         [Theory]
@@ -54,9 +57,10 @@ namespace ScuffedAuth.Tests
                 GrantType = GrantTypes.client_credentials
             };
 
-            TokenResponse response = await service.GetToken(request);
+            Response response = await service.GetToken(request);
 
-            response.Token.Code.Length.Should().Be(length);
+            response.Should().BeOfType<SuccessResponse<TokenResource>>();
+            response.As<SuccessResponse<TokenResource>>().Payload.AccessToken.Length.Should().Be(length);
         }
 
         [Theory]
@@ -83,7 +87,7 @@ namespace ScuffedAuth.Tests
         private static List<ValidationResult> ValidateModel(object model)
         {
             var validationResults = new List<ValidationResult>();
-            var ctx = new ValidationContext(model, null, null);
+            var ctx = new System.ComponentModel.DataAnnotations.ValidationContext(model, null, null);
             Validator.TryValidateObject(model, ctx, validationResults, true);
             return validationResults;
         }
@@ -106,9 +110,10 @@ namespace ScuffedAuth.Tests
                 GrantType = GrantTypes.client_credentials
             };
 
-            TokenResponse response = await service.GetToken(request);
+            Response response = await service.GetToken(request);
 
-            response.Token.Code.Length.Should().Be(expectedLength);
+            response.Should().BeOfType<SuccessResponse<TokenResource>>();
+            response.As<SuccessResponse<TokenResource>>().Payload.AccessToken.Length.Should().Be(expectedLength);
         }
 
         [Theory]
@@ -128,9 +133,10 @@ namespace ScuffedAuth.Tests
                 GrantType = GrantTypes.client_credentials
             };
 
-            TokenResponse response = await service.GetToken(request);
+            Response response = await service.GetToken(request);
 
-            response.Token.TokenType.Should().Be(tokenType);
+            response.Should().BeOfType<SuccessResponse<TokenResource>>();
+            response.As<SuccessResponse<TokenResource>>().Payload.TokenType.Should().Be(tokenType);
         }
 
         private static ITokenService CreateTokenService(TokenGeneratorSettings pSettings)
@@ -139,7 +145,15 @@ namespace ScuffedAuth.Tests
                 Options.Create(pSettings);
             var tokenRepository = Substitute.For<ITokenRepository>();
             var unitOfWork = Substitute.For<IUnitOfWork>();
-            return new TokenService(tokenRepository, unitOfWork, new TokenGenerator(tokenGeneratorSettings));
+            var mapper = Substitute.For<IMapper>();
+            mapper.Map<Token, TokenResource>(Arg.Any<Token>()).Returns(x =>
+                new TokenResource()
+                {
+                    AccessToken = ((Token)x[0]).Code,
+                    ExpiresIn = (int)((Token)x[0]).ExpiresIn.TotalSeconds,
+                    TokenType = ((Token)x[0]).TokenType
+                });
+            return new TokenService(tokenRepository, unitOfWork, new TokenGenerator(tokenGeneratorSettings), mapper);
         }
     }
 }
