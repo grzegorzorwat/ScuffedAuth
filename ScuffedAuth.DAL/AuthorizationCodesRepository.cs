@@ -24,7 +24,7 @@ namespace ScuffedAuth.DAL
             return _mapper.Map<ClientEntity, AuthorizationEndpoint.Client>(clientEntity);
         }
 
-        public async Task<AuthorizationCode.AuthorizationCode?> GetAuthorizationCode(string code)
+        public async Task<AuthorizationCode.AuthorizationCode> GetAuthorizationCode(string code)
         {
             var entity = await _context.AuthorizationCodes.FindAsync(code);
             return _mapper.Map<AuthorizationCodeEntity, AuthorizationCode.AuthorizationCode>(entity);
