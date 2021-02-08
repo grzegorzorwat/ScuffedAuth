@@ -1,6 +1,4 @@
-﻿using Authorization;
-using Authorization.TokenEndpoint;
-using AutoMapper;
+﻿using Authorization.TokenEndpoint;
 using BaseLibrary;
 using BaseLibrary.Responses;
 using FluentAssertions;
@@ -147,15 +145,7 @@ namespace ScuffedAuth.Tests
                 Options.Create(pSettings);
             var tokenRepository = Substitute.For<ITokenRepository>();
             var unitOfWork = Substitute.For<IUnitOfWork>();
-            var mapper = Substitute.For<IMapper>();
-            mapper.Map<Token, TokenResource>(Arg.Any<Token>()).Returns(x =>
-                new TokenResource()
-                {
-                    AccessToken = ((Token)x[0]).Code,
-                    ExpiresIn = (int)((Token)x[0]).ExpiresIn.TotalSeconds,
-                    TokenType = ((Token)x[0]).TokenType
-                });
-            return new TokenService(tokenRepository, unitOfWork, new TokenGenerator(tokenGeneratorSettings), mapper);
+            return new TokenService(tokenRepository, unitOfWork, new TokenGenerator(tokenGeneratorSettings), new TokenToTokenResourceMapper());
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BaseLibrary;
+﻿using BaseLibrary;
 using BaseLibrary.Responses;
 using System.Threading.Tasks;
 
@@ -10,12 +9,12 @@ namespace Authorization.TokenEndpoint
         private readonly ITokenRepository _tokenRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITokenGenerator _tokenGenerator;
-        private readonly IMapper _mapper;
+        private readonly IMapper<Token, TokenResource> _mapper;
 
         public TokenService(ITokenRepository tokenRepository,
             IUnitOfWork unitOfWork,
             ITokenGenerator tokenGenerator,
-            IMapper mapper)
+            IMapper<Token, TokenResource> mapper)
         {
             _tokenRepository = tokenRepository;
             _unitOfWork = unitOfWork;
@@ -30,7 +29,7 @@ namespace Authorization.TokenEndpoint
                 var token = _tokenGenerator.Generate();
                 await _tokenRepository.AddToken(token);
                 await _unitOfWork.Complete();
-                var resource = _mapper.Map<Token, TokenResource>(token);
+                var resource = _mapper.Map(token);
                 return new SuccessResponse<TokenResource>(resource);
             }
             catch

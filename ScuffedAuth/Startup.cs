@@ -99,6 +99,7 @@ namespace ScuffedAuth
             services.AddScoped<IResponseVisitor<ActionResult>, ResponseActionResultVisitor>();
             services.AddScoped<IResponseVisitor<AuthenticateResult>, ResponseAuthenticateResultVisitor>();
             services.AddScoped<IClaimsMapper<ResponseClient>, ClaimsMapper>();
+            services.AddScoped<BaseLibrary.IMapper<Token, TokenResource>, TokenToTokenResourceMapper>();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
