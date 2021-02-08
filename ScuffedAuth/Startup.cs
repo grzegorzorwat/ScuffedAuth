@@ -16,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ScuffedAuth.DAL;
 using ScuffedAuth.HttpBased;
+using ScuffedAuth.Mapping;
 using ScuffedAuth.Middlewares.Authentication;
 using ScuffedAuth.Middlewares.Authorization;
 using System;
@@ -100,6 +101,8 @@ namespace ScuffedAuth
             services.AddScoped<IResponseVisitor<AuthenticateResult>, ResponseAuthenticateResultVisitor>();
             services.AddScoped<IClaimsMapper<ResponseClient>, ClaimsMapper>();
             services.AddScoped<BaseLibrary.IMapper<Token, TokenResource>, TokenToTokenResourceMapper>();
+            services.AddScoped<BaseLibrary.IMapper<Requests.TokenRequest, TokenRequest>, TokenRequestToTokenRequestMapper>();
+            services.AddScoped<BaseLibrary.IMapper<Requests.TokenRequest, AuthorizationRequest>, TokenRequestToAuthorizationRequestMapper>();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
