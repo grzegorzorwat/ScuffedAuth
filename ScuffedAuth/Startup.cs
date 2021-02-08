@@ -103,6 +103,8 @@ namespace ScuffedAuth
             services.AddScoped<BaseLibrary.IMapper<Token, TokenResource>, TokenToTokenResourceMapper>();
             services.AddScoped<BaseLibrary.IMapper<Requests.TokenRequest, TokenRequest>, TokenRequestToTokenRequestMapper>();
             services.AddScoped<BaseLibrary.IMapper<Requests.TokenRequest, AuthorizationRequest>, TokenRequestToAuthorizationRequestMapper>();
+            services.AddScoped<BaseLibrary.IMapper<Requests.AuthorizationRequest, AuthorizationEndpoint.AuthorizationServiceRequest>,
+                AuthorizationRequestToAuthorizationServiceRequestMapper>();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }

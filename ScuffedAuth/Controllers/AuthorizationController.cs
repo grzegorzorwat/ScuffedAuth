@@ -1,5 +1,4 @@
 ﻿using Authorization.IntrospectionEnpoint;
-using AutoMapper;
 using BaseLibrary;
 using BaseLibrary.Responses;
 using Microsoft.AspNetCore.Authorization;
@@ -18,31 +17,31 @@ namespace ScuffedAuth.Controllers
     public class AuthorizationController : ControllerBase
     {
         private readonly TokenEndpoint.ITokenService _tokenService;
-        private readonly IMapper _mapper;
         private readonly IIntrospectionService _introspectionService;
         private readonly AuthorizationEndpoint.IAuthorizationService _authorizationService;
         private readonly IAuthorizationService _authorization;
         private readonly IResponseVisitor<ActionResult> _responseActionResultVisitor;
         private readonly IMapper<TokenRequest, TokenEndpoint.TokenRequest> _tokenRequestMapper;
         private readonly IMapper<TokenRequest, Authorization.AuthorizationRequest> _authorizationRequestMapper;
+        private readonly IMapper<AuthorizationRequest, AuthorizationEndpoint.AuthorizationServiceRequest> _authorizationServiceRequestMapper;
 
         public AuthorizationController(TokenEndpoint.ITokenService tokenService,
-            IMapper mapper,
             IIntrospectionService introspectionService,
             AuthorizationEndpoint.IAuthorizationService authorizationService,
             IAuthorizationService authorization,
             IResponseVisitor<ActionResult> responseActionResultVisitor,
             IMapper<TokenRequest, TokenEndpoint.TokenRequest> tokenRequestMapper,
-            IMapper<TokenRequest, Authorization.AuthorizationRequest> authorizationRequestMapper)
+            IMapper<TokenRequest, Authorization.AuthorizationRequest> authorizationRequestMapper,
+            IMapper<AuthorizationRequest, AuthorizationEndpoint.AuthorizationServiceRequest> authorizationServiceRequestMapper)
         {
             _tokenService = tokenService;
-            _mapper = mapper;
             _introspectionService = introspectionService;
             _authorizationService = authorizationService;
             _authorization = authorization;
             _responseActionResultVisitor = responseActionResultVisitor;
             _tokenRequestMapper = tokenRequestMapper;
             _authorizationRequestMapper = authorizationRequestMapper;
+            _authorizationServiceRequestMapper = authorizationServiceRequestMapper;
         }
 
         [HttpPost]
@@ -84,7 +83,7 @@ namespace ScuffedAuth.Controllers
         [ProducesResponseType(StatusCodes.Status302Found)]
         public async Task<ActionResult> Authorize([FromQuery] AuthorizationRequest authorizationRequest)
         {
-            var mappedRequest = _mapper.Map<AuthorizationRequest, AuthorizationEndpoint.AuthorizationServiceRequest>(authorizationRequest);
+            var mappedRequest = _authorizationServiceRequestMapper.Map(authorizationRequest);
             var response = await _authorizationService.Authorize(mappedRequest);
             return response.Accept(_responseActionResultVisitor);
         }
