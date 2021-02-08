@@ -10,8 +10,3 @@ ScuffedAuth is my learning project based on The OAuth 2.0 Authorization Framewor
 * Entity Framework Core with MS SQL
 * AutoMapper
 * Docker with Docker Compose and Docker support for ASP.NET Core projects
-
-# TODO:
-* MVC Login page with Microsoft identity
-* Separate persistant layer from app
-* Clients library
