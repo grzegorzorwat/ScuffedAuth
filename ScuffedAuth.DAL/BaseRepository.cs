@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace ScuffedAuth.Persistance
+namespace ScuffedAuth.DAL
 {
     public abstract class BaseRepository
     {

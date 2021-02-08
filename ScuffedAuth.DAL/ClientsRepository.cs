@@ -1,9 +1,9 @@
 ﻿using Authentication.ClientCredentials;
 using AutoMapper;
-using ScuffedAuth.Persistance.Entities;
+using ScuffedAuth.DAL.Entities;
 using System.Threading.Tasks;
 
-namespace ScuffedAuth.Persistance
+namespace ScuffedAuth.DAL
 {
     public class ClientsRepository : BaseRepository, IClientsRepository
     {

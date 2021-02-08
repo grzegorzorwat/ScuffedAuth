@@ -1,7 +1,7 @@
-﻿using Authorization;
+﻿using BaseLibrary;
 using System.Threading.Tasks;
 
-namespace ScuffedAuth.Persistance
+namespace ScuffedAuth.DAL
 {
     public class UnitOfWork : IUnitOfWork
     {

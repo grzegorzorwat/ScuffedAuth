@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ScuffedAuth.Persistance.Entities;
-using System.Collections.Generic;
+using ScuffedAuth.DAL.Entities;
 
-namespace ScuffedAuth.Persistance
+namespace ScuffedAuth.DAL
 {
     public class AppDbContext : DbContext
     {

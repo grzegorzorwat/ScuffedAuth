@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using ScuffedAuth.Persistance.Entities;
+using ScuffedAuth.DAL.Entities;
 using System.Threading.Tasks;
 using AuthorizationCode = Authorization.AuthorizationCode;
 using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
 
-namespace ScuffedAuth.Persistance
+namespace ScuffedAuth.DAL
 {
     public class AuthorizationCodesRepository : BaseRepository,
         AuthorizationEndpoint.IAuthorizationCodesRepository,

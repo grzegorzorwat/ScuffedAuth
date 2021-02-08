@@ -1,12 +1,12 @@
 ﻿using Authorization.AuthorizationCode;
 using Authorization.TokenEndpoint;
 using AutoMapper;
-using ScuffedAuth.Persistance.Entities;
+using ScuffedAuth.DAL.Entities;
 using System;
 using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
 using ClientCredentials = Authentication.ClientCredentials;
 
-namespace ScuffedAuth.Persistance.Mapping
+namespace ScuffedAuth.DAL.Mapping
 {
     public class EntityToObjectProfile : Profile
     {

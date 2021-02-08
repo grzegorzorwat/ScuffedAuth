@@ -1,6 +1,7 @@
 ﻿using Authorization;
 using Authorization.TokenEndpoint;
 using AutoMapper;
+using BaseLibrary;
 using BaseLibrary.Responses;
 using FluentAssertions;
 using Microsoft.Extensions.Options;

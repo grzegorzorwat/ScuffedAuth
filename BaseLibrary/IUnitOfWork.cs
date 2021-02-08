@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Authorization
+namespace BaseLibrary
 {
     public interface IUnitOfWork
     {

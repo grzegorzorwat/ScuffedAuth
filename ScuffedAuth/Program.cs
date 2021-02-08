@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ScuffedAuth.Areas.Identity;
-using ScuffedAuth.Persistance;
+using ScuffedAuth.DAL;
 
 namespace ScuffedAuth
 {

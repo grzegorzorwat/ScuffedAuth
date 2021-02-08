@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ScuffedAuth.Persistance.Entities
+namespace ScuffedAuth.DAL.Entities
 {
     public class AuthorizationCodeEntity
     {

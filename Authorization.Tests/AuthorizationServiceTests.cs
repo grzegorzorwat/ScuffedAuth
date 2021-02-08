@@ -1,5 +1,6 @@
 ﻿using Authorization.AuthorizationEndpoint;
 using Authorization.Codes;
+using BaseLibrary;
 using BaseLibrary.Responses;
 using Microsoft.Extensions.Options;
 using NSubstitute;
