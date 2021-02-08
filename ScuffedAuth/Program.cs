@@ -16,7 +16,7 @@ namespace ScuffedAuth
 
             using(var scope = host.Services.CreateScope())
             {
-                scope.ServiceProvider.EnsureInMemoryDatabaseCreated();
+                scope.ServiceProvider.MigrateScuffedAuth();
                 using (var context = scope.ServiceProvider.GetRequiredService<IdentityDbContext>())
                 {
                     context.Database.Migrate();

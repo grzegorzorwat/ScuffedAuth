@@ -79,7 +79,7 @@ namespace ScuffedAuth
             services.AddScoped<IIntrospectionService, IntrospectionService>();
             services.AddScoped<AuthorizationEndpoint.IAuthorizationService, AuthorizationEndpoint.AuthorizationService>();
             services.AddScoped<AuthorizationEndpoint.IAuthorizationCodeGenerator, AuthorizationEndpoint.AuthorizationCodeGenerator>();
-            services.AddRepositories();
+            services.AddRepositories(Configuration.GetConnectionString("ScuffedAuthDatabase"));
             services.AddAuthenticaticators();
             services.RegisterAuthorization();
 

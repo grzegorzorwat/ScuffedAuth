@@ -11,13 +11,10 @@ namespace ScuffedAuth.DAL
 {
     public static class ServiceConfiguration
     {
-        public static void AddRepositories(this IServiceCollection services)
+        public static void AddRepositories(this IServiceCollection services, string connectionString)
         {
-            services
-                .AddDbContext<AppDbContext>(options =>
-                {
-                    options.UseInMemoryDatabase("scuffed-auth-in-memory");
-                });
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(connectionString));
             services.AddScoped<IClientsRepository, ClientsRepository>();
             services.AddScoped<ITokenRepository, TokenRepository>();
             services.AddScoped<AuthorizationEndpoint.IAuthorizationCodesRepository, AuthorizationCodesRepository>();
@@ -25,10 +22,10 @@ namespace ScuffedAuth.DAL
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
-        public static void EnsureInMemoryDatabaseCreated(this IServiceProvider service)
+        public static void MigrateScuffedAuth(this IServiceProvider service)
         {
             using var context = service.GetRequiredService<AppDbContext>();
-            context.Database.EnsureCreated();
+            context.Database.Migrate();
         }
     }
 }
