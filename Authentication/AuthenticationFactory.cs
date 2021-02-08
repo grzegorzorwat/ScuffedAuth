@@ -1,6 +1,6 @@
 ﻿using Authentication.ClientCredentials;
-using Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using OAuth.Model;
 using System;
 
 namespace Authentication
@@ -8,8 +8,6 @@ namespace Authentication
     public class AuthenticationFactory
     {
         private readonly IServiceProvider _serviceProvider = default!;
-
-        protected AuthenticationFactory() { }
 
         public AuthenticationFactory(IServiceProvider serviceProvider)
         {
@@ -20,8 +18,9 @@ namespace Authentication
         {
             return grantType switch
             {
-                GrantTypes.client_credentials => (IAuthenticator)_serviceProvider.GetRequiredService(typeof(ClientCredentialsAuthenticator)),
-                _ => (IAuthenticator)_serviceProvider.GetRequiredService(typeof(UnidentifiedAuthentication))
+                GrantTypes.client_credentials => _serviceProvider.GetRequiredService<ClientCredentialsAuthenticator>(),
+                GrantTypes.authorization_code => _serviceProvider.GetRequiredService<PassThroughAuthenticator>(),
+                _ => _serviceProvider.GetRequiredService<UnidentifiedAuthentication>()
             };
         }
     }

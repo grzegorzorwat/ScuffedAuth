@@ -1,10 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using OAuth.Model;
 
 namespace Authorization.TokenEndpoint
 {
     public class TokenRequest
     {
-        [Required]
         public GrantTypes GrantType { get; set; }
     }
 }

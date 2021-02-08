@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using BaseLibrary.Responses;
+using System.Threading.Tasks;
 
 namespace Authentication.ClientCredentials
 {
@@ -17,7 +18,7 @@ namespace Authentication.ClientCredentials
             _secretVerifier = secretVerifier;
         }
 
-        public async Task<AuthenticationResponse> Authenticate(string authorizationHeader)
+        public async Task<Response> Authenticate(string authorizationHeader)
         {
             if (_decoder.TryDecode(authorizationHeader, out var credentials))
             {
@@ -27,12 +28,12 @@ namespace Authentication.ClientCredentials
                 {
                     if (_secretVerifier.Verify(client.Secret, credentials.Secret))
                     {
-                        return new AuthenticationResponse(credentials);
+                        return new SuccessResponse<ResponseClient>(new ResponseClient(client.Id));
                     }
                 }
             }
 
-            return new AuthenticationResponse("Invalid credentials");
+            return new ErrorResponse("Invalid credentials");
         }
     }
 }

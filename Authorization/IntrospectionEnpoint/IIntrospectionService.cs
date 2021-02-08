@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using BaseLibrary.Responses;
+using System.Threading.Tasks;
 
 namespace Authorization.IntrospectionEnpoint
 {
     public interface IIntrospectionService
     {
-        Task<IntrospectionResponse> Introspect(IntrospectionRequest request);
+        Task<Response> Introspect(IntrospectionRequest request);
     }
 }

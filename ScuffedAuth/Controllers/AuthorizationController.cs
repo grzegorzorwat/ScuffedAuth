@@ -1,10 +1,14 @@
 ﻿using Authorization.IntrospectionEnpoint;
-using Authorization.TokenEndpoint;
 using AutoMapper;
+using BaseLibrary.Responses;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ScuffedAuth.Authentication;
+using ScuffedAuth.Middlewares.Authentication;
+using ScuffedAuth.Requests;
 using System.Threading.Tasks;
+using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
+using TokenEndpoint = Authorization.TokenEndpoint;
 
 namespace ScuffedAuth.Controllers
 {
@@ -12,17 +16,26 @@ namespace ScuffedAuth.Controllers
     [Route("oauth")]
     public class AuthorizationController : ControllerBase
     {
-        private readonly ITokenService _tokenService;
+        private readonly TokenEndpoint.ITokenService _tokenService;
         private readonly IMapper _mapper;
         private readonly IIntrospectionService _introspectionService;
+        private readonly AuthorizationEndpoint.IAuthorizationService _authorizationService;
+        private readonly IAuthorizationService _authorization;
+        private readonly IResponseVisitor<ActionResult> _responseActionResultVisitor;
 
-        public AuthorizationController(ITokenService tokenService,
+        public AuthorizationController(TokenEndpoint.ITokenService tokenService,
             IMapper mapper,
-            IIntrospectionService introspectionService)
+            IIntrospectionService introspectionService,
+            AuthorizationEndpoint.IAuthorizationService authorizationService,
+            IAuthorizationService authorization,
+            IResponseVisitor<ActionResult> responseActionResultVisitor)
         {
             _tokenService = tokenService;
             _mapper = mapper;
             _introspectionService = introspectionService;
+            _authorizationService = authorizationService;
+            _authorization = authorization;
+            _responseActionResultVisitor = responseActionResultVisitor;
         }
 
         [HttpPost]
@@ -32,15 +45,19 @@ namespace ScuffedAuth.Controllers
         [Authorize(AuthenticationSchemes = AuthenticationSchemeConstants.GrantTypesAuthenticationScheme)]
         public async Task<ActionResult> Token([FromQuery] TokenRequest tokenRequest)
         {
-            var response = await _tokenService.GetToken(tokenRequest);
+            var authorizationRequest = _mapper.Map<TokenRequest, Authorization.AuthorizationRequest>(tokenRequest);
+            var authorizationResponse = await _authorization.AuthorizeAsync(User,
+                authorizationRequest,
+                "GrantTypeAuthorization");
 
-            if (!response.Success)
+            if (!authorizationResponse.Succeeded)
             {
-                return BadRequest(response.Message);
+                return BadRequest();
             }
 
-            var resource = _mapper.Map<Token, TokenResource>(response.Token);
-            return Ok(resource);
+            var mappedRequest = _mapper.Map<TokenRequest, TokenEndpoint.TokenRequest>(tokenRequest);
+            var response = await _tokenService.GetToken(mappedRequest);
+            return response.Accept(_responseActionResultVisitor);
         }
 
         [HttpPost]
@@ -50,14 +67,19 @@ namespace ScuffedAuth.Controllers
         public async Task<ActionResult> Introspect([FromQuery] IntrospectionRequest introspectionRequest)
         {
             var response = await _introspectionService.Introspect(introspectionRequest);
+            return response.Accept(_responseActionResultVisitor);
+        }
 
-            if (!response.Success)
-            {
-                return BadRequest(response.Message);
-            }
-
-            var resource = _mapper.Map<TokenInfo, TokenInfoResource>(response.TokenInfo);
-            return Ok(resource);
+        [HttpGet]
+        [Route("authorize")]
+        [Consumes("application/x-www-form-urlencoded")]
+        [Produces("application/x-www-form-urlencoded")]
+        [ProducesResponseType(StatusCodes.Status302Found)]
+        public async Task<ActionResult> Authorize([FromQuery] AuthorizationRequest authorizationRequest)
+        {
+            var mappedRequest = _mapper.Map<AuthorizationRequest, AuthorizationEndpoint.AuthorizationServiceRequest>(authorizationRequest);
+            var response = await _authorizationService.Authorize(mappedRequest);
+            return response.Accept(_responseActionResultVisitor);
         }
     }
 }

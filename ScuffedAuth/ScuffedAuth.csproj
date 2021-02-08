@@ -10,16 +10,19 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Authentication\Authentication.csproj" />
     <ProjectReference Include="..\Authorization\Authorization.csproj" />
+    <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj" />
+    <ProjectReference Include="..\Identity.DAL\Identity.DAL.csproj" />
+    <ProjectReference Include="..\ScuffedAuth.DAL\ScuffedAuth.DAL.csproj" />
   </ItemGroup>
 
 </Project>

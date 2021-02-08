@@ -1,21 +1,25 @@
+using Authentication;
+using Authorization;
+using Authorization.IntrospectionEnpoint;
+using Authorization.TokenEndpoint;
+using AutoMapper;
+using BaseLibrary.Responses;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using ScuffedAuth.DAL;
+using ScuffedAuth.HttpBased;
+using ScuffedAuth.Middlewares.Authentication;
+using ScuffedAuth.Middlewares.Authorization;
 using System;
-using Microsoft.Extensions.Options;
-using AutoMapper;
-using ScuffedAuth.Persistance;
-using Microsoft.EntityFrameworkCore;
-using Authorization.TokenEndpoint;
-using Authentication.ClientCredentials;
-using Authorization;
-using Authorization.IntrospectionEnpoint;
-using Microsoft.AspNetCore.Authorization;
-using Authentication;
-using ScuffedAuth.Authentication;
+using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
 
 namespace ScuffedAuth
 {
@@ -30,7 +34,6 @@ namespace ScuffedAuth
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
             services
                 .AddSwaggerGen(c =>
                 {
@@ -58,33 +61,46 @@ namespace ScuffedAuth
                             Array.Empty<string>()
                         }
                     });
+
+                    c.OperationFilter<Swagger.RefererFilter>();
                 });
 
-            services.AddAutoMapper(typeof(Startup));
-            services
-                .AddDbContext<AppDbContext>(options =>
-                {
-                    options.UseInMemoryDatabase("scuffed-auth-in-memory");
-                });
+            services.AddAutoMapper(typeof(Startup), typeof(DAL.ServiceConfiguration));
             services
                 .AddOptions<TokenGeneratorSettings>()
                 .Bind(Configuration.GetSection("TokenGeneratorSettings"))
                 .ValidateDataAnnotations();
+            services
+                .AddOptions<Authorization.Codes.ExpiringCodesGeneratorSettings> ()
+                .Bind(Configuration.GetSection("AuthorizationCodeSettings"))
+                .ValidateDataAnnotations();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
-            services.AddScoped<IClientsRepository, ClientsRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<ITokenRepository, TokenRepository>();
             services.AddScoped<IIntrospectionService, IntrospectionService>();
-            ServicesConfiguration.AddAuthentication(services);
+            services.AddScoped<AuthorizationEndpoint.IAuthorizationService, AuthorizationEndpoint.AuthorizationService>();
+            services.AddScoped<AuthorizationEndpoint.IAuthorizationCodeGenerator, AuthorizationEndpoint.AuthorizationCodeGenerator>();
+            services.AddRepositories(Configuration.GetConnectionString("ScuffedAuthDatabase"));
+            services.AddAuthenticaticators();
+            services.RegisterAuthorization();
+
             services.AddHttpContextAccessor();
             services
-                .AddAuthentication(options =>
-                {
-                    options.DefaultScheme = AuthenticationSchemeConstants.GrantTypesAuthenticationScheme;
-                })
+                .AddAuthentication()
                 .AddScheme<GrantTypesAuthenticationSchemeOptions, GrantTypesAuthenticationHandler>(
                     AuthenticationSchemeConstants.GrantTypesAuthenticationScheme, op => { });
+            services
+                .AddAuthorization(options =>
+                {
+                    options.AddPolicy("GrantTypeAuthorization", policy =>
+                        policy.Requirements.Add(new GrantTypesAuthorizationRequirement()));
+                });
+            services.AddScoped<IAuthorizationHandler, GrantTypesAuthorizationHandler>();
+            services.AddScoped<AuthorizationEndpoint.IAuthorizationCodeAuthentication, AuthorizationCodeAuthentication>();
+            services.AddScoped<IResponseVisitor<ActionResult>, ResponseActionResultVisitor>();
+            services.AddScoped<IResponseVisitor<AuthenticateResult>, ResponseAuthenticateResultVisitor>();
+            services.AddScoped<IClaimsMapper<ResponseClient>, ClaimsMapper>();
+            services.AddControllersWithViews();
+            services.AddRazorPages();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -96,14 +112,17 @@ namespace ScuffedAuth
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ScuffedAuth v1"));
             }
 
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app
-                .UseEndpoints(endpoints =>
-                {
-                    endpoints.MapControllers();
-                });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
+            });
         }
     }
 }

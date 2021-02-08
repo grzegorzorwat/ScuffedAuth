@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using BaseLibrary.Responses;
+using System.Threading.Tasks;
 
 namespace Authentication
 {
     public interface IAuthenticator
     {
-        Task<AuthenticationResponse> Authenticate(string authorizationHeader);
+        Task<Response> Authenticate(string authorizationHeader);
     }
 }

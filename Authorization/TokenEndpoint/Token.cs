@@ -1,25 +1,19 @@
-﻿using System;
+﻿using Authorization.Codes;
+using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Authorization.TokenEndpoint
 {
-    public class Token
+    public class Token : ExpiringCode
     {
-        public Token(string value, string tokenType, DateTime creationDate, int expiresIn)
+        [NotNull] public string? TokenType { get; init; }
+
+        public static Token Empty => new Token()
         {
-            Value = value;
-            TokenType = tokenType;
-            CreationDate = creationDate;
-            ExpiresIn = expiresIn;
-        }
-
-        public string Value { get; init; }
-
-        public string TokenType { get; init; }
-
-        public DateTime CreationDate { get; init; }
-
-        public int ExpiresIn { get; init; }
-
-        public static Token Empty => new Token(string.Empty, string.Empty, DateTime.UtcNow, 0);
+            Code = string.Empty,
+            CreationDate = DateTime.UtcNow,
+            ExpiresIn = TimeSpan.Zero,
+            TokenType = string.Empty
+        };
     }
 }

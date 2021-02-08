@@ -6,7 +6,7 @@ namespace Authentication
 {
     public static class ServicesConfiguration
     {
-        public static void AddAuthentication(this IServiceCollection services)
+        public static void AddAuthenticaticators(this IServiceCollection services)
         {
             services.AddScoped<AuthenticationFactory>();
             services
@@ -18,11 +18,15 @@ namespace Authentication
                     s => s.GetRequiredService<ClientCredentialsAuthenticator>());
             services.AddScoped<ClientCredentialsDecoder>();
             services.AddScoped<ISecretVerifier, SecretVerifier>();
+            services
+                .AddScoped<PassThroughAuthenticator>()
+                .AddScoped<IAuthenticator, PassThroughAuthenticator>(
+                    s => s.GetRequiredService<PassThroughAuthenticator>());
         }
 
         public static IAuthenticator GetClientCredentialsAuthorization(this IServiceProvider serviceProvider)
         {
-            return (IAuthenticator)serviceProvider.GetRequiredService(typeof(ClientCredentialsAuthenticator));
+            return serviceProvider.GetRequiredService<ClientCredentialsAuthenticator>();
         }
     }
 }
