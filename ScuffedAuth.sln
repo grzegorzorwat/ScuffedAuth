@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.DAL", "Identity.DA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseLibrary", "BaseLibrary\BaseLibrary.csproj", "{15E53097-6C34-4C9A-9C49-3E430654741A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OAuth.Model", "OAuth.Model\OAuth.Model.csproj", "{3B94E6F8-39D0-4AC4-8448-64F2BAF47604}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{15E53097-6C34-4C9A-9C49-3E430654741A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15E53097-6C34-4C9A-9C49-3E430654741A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15E53097-6C34-4C9A-9C49-3E430654741A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B94E6F8-39D0-4AC4-8448-64F2BAF47604}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B94E6F8-39D0-4AC4-8448-64F2BAF47604}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B94E6F8-39D0-4AC4-8448-64F2BAF47604}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B94E6F8-39D0-4AC4-8448-64F2BAF47604}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

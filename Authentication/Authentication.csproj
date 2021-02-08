@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj" />
+    <ProjectReference Include="..\OAuth.Model\OAuth.Model.csproj" />
   </ItemGroup>
 
 </Project>

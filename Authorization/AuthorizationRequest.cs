@@ -1,4 +1,6 @@
-﻿namespace Authorization
+﻿using OAuth.Model;
+
+namespace Authorization
 {
     public class AuthorizationRequest
     {

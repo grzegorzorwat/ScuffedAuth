@@ -1,5 +1,6 @@
 ﻿using Authorization.AuthorizationCode;
 using Microsoft.Extensions.DependencyInjection;
+using OAuth.Model;
 using System;
 
 namespace Authorization

@@ -5,6 +5,7 @@ using BaseLibrary.Responses;
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using NSubstitute;
+using OAuth.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

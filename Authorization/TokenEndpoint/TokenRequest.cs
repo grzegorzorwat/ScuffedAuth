@@ -1,4 +1,6 @@
-﻿namespace Authorization.TokenEndpoint
+﻿using OAuth.Model;
+
+namespace Authorization.TokenEndpoint
 {
     public class TokenRequest
     {

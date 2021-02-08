@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Authorization
+namespace OAuth.Model
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum GrantTypes

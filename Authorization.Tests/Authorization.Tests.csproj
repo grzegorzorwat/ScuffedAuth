@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Authorization\Authorization.csproj" />
+    <ProjectReference Include="..\OAuth.Model\OAuth.Model.csproj" />
     <ProjectReference Include="..\ScuffedAuth\ScuffedAuth.csproj" />
   </ItemGroup>
 

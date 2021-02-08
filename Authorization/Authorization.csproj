@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.2" />
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>Authorization.Tests</_Parameter1>
@@ -14,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Authentication\Authentication.csproj" />
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj" />
+    <ProjectReference Include="..\OAuth.Model\OAuth.Model.csproj" />
   </ItemGroup>
 
 </Project>

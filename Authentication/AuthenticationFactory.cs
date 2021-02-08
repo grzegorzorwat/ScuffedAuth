@@ -1,6 +1,6 @@
 ﻿using Authentication.ClientCredentials;
-using Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using OAuth.Model;
 using System;
 
 namespace Authentication

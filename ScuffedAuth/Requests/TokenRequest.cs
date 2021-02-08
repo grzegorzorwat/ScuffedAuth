@@ -1,5 +1,5 @@
-﻿using Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using OAuth.Model;
 using System.ComponentModel.DataAnnotations;
 
 namespace ScuffedAuth.Requests
