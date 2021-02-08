@@ -58,14 +58,6 @@ namespace ScuffedAuth.Controllers
             var mappedRequest = _mapper.Map<TokenRequest, TokenEndpoint.TokenRequest>(tokenRequest);
             var response = await _tokenService.GetToken(mappedRequest);
             return response.Accept(_responseActionResultVisitor);
-
-            if (!response.Success)
-            {
-                return BadRequest(response.Message);
-            }
-
-            var resource = _mapper.Map<TokenEndpoint.Token, TokenEndpoint.TokenResource>(response.Token);
-            return Ok(resource);
         }
 
         [HttpPost]

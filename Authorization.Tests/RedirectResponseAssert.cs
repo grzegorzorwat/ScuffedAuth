@@ -1,6 +1,5 @@
 ﻿using BaseLibrary.Responses;
 using FluentAssertions;
-using Tests.Library;
 
 namespace Authorization.Tests
 {

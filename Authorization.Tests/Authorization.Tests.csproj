@@ -21,7 +21,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Authorization\Authorization.csproj" />
     <ProjectReference Include="..\ScuffedAuth\ScuffedAuth.csproj" />
-    <ProjectReference Include="..\Tests.Library\Tests.Library.csproj" />
   </ItemGroup>
 
 </Project>
