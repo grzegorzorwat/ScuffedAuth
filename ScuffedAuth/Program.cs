@@ -16,12 +16,7 @@ namespace ScuffedAuth
 
             using(var scope = host.Services.CreateScope())
             {
-                using (var context = scope.ServiceProvider.GetService<AppDbContext>())
-                {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                    context.Database.EnsureCreated();
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-                }
+                scope.ServiceProvider.EnsureInMemoryDatabaseCreated();
                 using (var context = scope.ServiceProvider.GetRequiredService<IdentityDbContext>())
                 {
                     context.Database.Migrate();

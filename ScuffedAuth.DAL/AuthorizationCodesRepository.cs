@@ -6,7 +6,7 @@ using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
 
 namespace ScuffedAuth.DAL
 {
-    public class AuthorizationCodesRepository : BaseRepository,
+    internal class AuthorizationCodesRepository : BaseRepository,
         AuthorizationEndpoint.IAuthorizationCodesRepository,
         AuthorizationCode.IAuthorizationCodesRepository
     {

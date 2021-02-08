@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace ScuffedAuth.DAL
 {
-    public class UnitOfWork : IUnitOfWork
+    internal class UnitOfWork : IUnitOfWork
     {
         private readonly AppDbContext _context;
 

@@ -3,7 +3,7 @@ using ScuffedAuth.DAL.Entities;
 
 namespace ScuffedAuth.DAL
 {
-    public class AppDbContext : DbContext
+    internal class AppDbContext : DbContext
     {
         public DbSet<ClientEntity> Clients { get; set; } = default!;
         public DbSet<TokenEntity> Tokens { get; set; } = default!;

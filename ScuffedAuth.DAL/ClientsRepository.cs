@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ScuffedAuth.DAL
 {
-    public class ClientsRepository : BaseRepository, IClientsRepository
+    internal class ClientsRepository : BaseRepository, IClientsRepository
     {
         public ClientsRepository(AppDbContext context, IMapper mapper) : base(context, mapper) { }
 

@@ -1,10 +1,8 @@
 using Authentication;
-using Authentication.ClientCredentials;
 using Authorization;
 using Authorization.IntrospectionEnpoint;
 using Authorization.TokenEndpoint;
 using AutoMapper;
-using BaseLibrary;
 using BaseLibrary.Responses;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -21,7 +19,6 @@ using ScuffedAuth.HttpBased;
 using ScuffedAuth.Middlewares.Authentication;
 using ScuffedAuth.Middlewares.Authorization;
 using System;
-using AuthorizationCode = Authorization.AuthorizationCode;
 using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
 
 namespace ScuffedAuth
@@ -68,12 +65,7 @@ namespace ScuffedAuth
                     c.OperationFilter<Swagger.RefererFilter>();
                 });
 
-            services.AddAutoMapper(typeof(Startup));
-            services
-                .AddDbContext<AppDbContext>(options =>
-                {
-                    options.UseInMemoryDatabase("scuffed-auth-in-memory");
-                });
+            services.AddAutoMapper(typeof(Startup), typeof(DAL.ServiceConfiguration));
             services
                 .AddOptions<TokenGeneratorSettings>()
                 .Bind(Configuration.GetSection("TokenGeneratorSettings"))
@@ -84,15 +76,10 @@ namespace ScuffedAuth
                 .ValidateDataAnnotations();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
-            services.AddScoped<IClientsRepository, ClientsRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<ITokenRepository, TokenRepository>();
             services.AddScoped<IIntrospectionService, IntrospectionService>();
             services.AddScoped<AuthorizationEndpoint.IAuthorizationService, AuthorizationEndpoint.AuthorizationService>();
-            services.AddScoped<AuthorizationEndpoint.IAuthorizationCodesRepository, AuthorizationCodesRepository>();
             services.AddScoped<AuthorizationEndpoint.IAuthorizationCodeGenerator, AuthorizationEndpoint.AuthorizationCodeGenerator>();
-            services.AddScoped<AuthorizationCode.IAuthorizationCodesRepository, AuthorizationCodesRepository>();
-
+            services.AddRepositories();
             services.AddAuthenticaticators();
             services.RegisterAuthorization();
 
@@ -111,7 +98,7 @@ namespace ScuffedAuth
             services.AddScoped<AuthorizationEndpoint.IAuthorizationCodeAuthentication, AuthorizationCodeAuthentication>();
             services.AddScoped<IResponseVisitor<ActionResult>, ResponseActionResultVisitor>();
             services.AddScoped<IResponseVisitor<AuthenticateResult>, ResponseAuthenticateResultVisitor>();
-            services.AddScoped<IClaimsMapper<ResponseClient>, Middlewares.Authentication.ClaimsMapper>();
+            services.AddScoped<IClaimsMapper<ResponseClient>, ClaimsMapper>();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }

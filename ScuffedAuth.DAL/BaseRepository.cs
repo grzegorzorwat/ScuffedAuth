@@ -2,7 +2,7 @@
 
 namespace ScuffedAuth.DAL
 {
-    public abstract class BaseRepository
+    internal abstract class BaseRepository
     {
         protected readonly AppDbContext _context;
         protected readonly IMapper _mapper;
