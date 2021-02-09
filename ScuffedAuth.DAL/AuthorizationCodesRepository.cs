@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BaseLibrary;
 using ScuffedAuth.DAL.Entities;
 using System.Threading.Tasks;
 using AuthorizationCode = Authorization.AuthorizationCode;
@@ -10,7 +11,14 @@ namespace ScuffedAuth.DAL
         AuthorizationEndpoint.IAuthorizationCodesRepository,
         AuthorizationCode.IAuthorizationCodesRepository
     {
-        public AuthorizationCodesRepository(AppDbContext context, IMapper mapper) : base(context, mapper) { }
+        private readonly IMapper<ClientEntity, AuthorizationEndpoint.Client> _authorizationEndpointClientMapper;
+
+        public AuthorizationCodesRepository(AppDbContext context,
+            IMapper mapper,
+            IMapper<ClientEntity, AuthorizationEndpoint.Client> authorizationEndpointClientMapper) : base(context, mapper)
+        {
+            _authorizationEndpointClientMapper = authorizationEndpointClientMapper;
+        }
 
         public async Task AddAuthorizationCode(AuthorizationEndpoint.AuthorizationCode authorizationCode)
         {
@@ -21,7 +29,7 @@ namespace ScuffedAuth.DAL
         public async Task<AuthorizationEndpoint.Client> GetClientByIdAsync(string id)
         {
             var clientEntity = await _context.Clients.FindAsync(id);
-            return _mapper.Map<ClientEntity, AuthorizationEndpoint.Client>(clientEntity);
+            return _authorizationEndpointClientMapper.Map(clientEntity);
         }
 
         public async Task<AuthorizationCode.AuthorizationCode> GetAuthorizationCode(string code)

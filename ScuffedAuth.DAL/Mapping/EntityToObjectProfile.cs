@@ -3,7 +3,6 @@ using Authorization.TokenEndpoint;
 using AutoMapper;
 using ScuffedAuth.DAL.Entities;
 using System;
-using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
 
 namespace ScuffedAuth.DAL.Mapping
 {
@@ -11,7 +10,6 @@ namespace ScuffedAuth.DAL.Mapping
     {
         public EntityToObjectProfile()
         {
-            CreateMap<ClientEntity, AuthorizationEndpoint.Client>();
             CreateMap<TokenEntity, Token>()
                 .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Value))
                 .ForMember(dest => dest.ExpiresIn, opt => opt.MapFrom(src => TimeSpan.FromSeconds(src.ExpiresIn)));
