@@ -1,5 +1,4 @@
-﻿using Authorization.TokenEndpoint;
-using AutoMapper;
+﻿using AutoMapper;
 using ScuffedAuth.DAL.Entities;
 using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
 
@@ -9,7 +8,6 @@ namespace ScuffedAuth.DAL.Mapping
     {
         public ObjectToEntityProfile()
         {
-            CreateMap<AuthorizationEndpoint.Client, ClientEntity>();
             CreateMap<AuthorizationEndpoint.AuthorizationCode, AuthorizationCodeEntity>()
                 .ForMember(dest => dest.ExpiresIn, opt => opt.MapFrom(src => src.ExpiresIn.TotalSeconds)); ;
         }
