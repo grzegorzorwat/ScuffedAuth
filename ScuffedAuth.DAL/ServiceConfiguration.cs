@@ -28,6 +28,7 @@ namespace ScuffedAuth.DAL
             services.AddScoped<IMapper<AuthorizationCodeEntity, AuthorizationCode.AuthorizationCode>, AuthorizationCodeEntityToAuthorizationCodeMapper>();
             services.AddScoped<IMapper<Token, TokenEntity>, TokenToTokenEntity>();
             services.AddScoped<IMapper<AuthorizationEndpoint.Client, ClientEntity>, AuthorizationEnpointClientToClientEntity>();
+            services.AddScoped<IMapper<AuthorizationEndpoint.AuthorizationCode, AuthorizationCodeEntity>, AuthorizationCodeToAuthorizationCodeEntityMapper>();
         }
 
         public static void MigrateScuffedAuth(this IServiceProvider service)
