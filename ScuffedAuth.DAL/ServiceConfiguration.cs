@@ -3,6 +3,8 @@ using Authorization.TokenEndpoint;
 using BaseLibrary;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ScuffedAuth.DAL.Entities;
+using ScuffedAuth.DAL.Mapping;
 using System;
 using AuthorizationCode = Authorization.AuthorizationCode;
 using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
@@ -20,6 +22,7 @@ namespace ScuffedAuth.DAL
             services.AddScoped<AuthorizationEndpoint.IAuthorizationCodesRepository, AuthorizationCodesRepository>();
             services.AddScoped<AuthorizationCode.IAuthorizationCodesRepository, AuthorizationCodesRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IMapper<ClientEntity, Client>, ClientEntityToClientCredentialsClientMapper>();
         }
 
         public static void MigrateScuffedAuth(this IServiceProvider service)
