@@ -79,8 +79,9 @@ namespace ScuffedAuth.Controllers
         [HttpGet]
         [Route("authorize")]
         [Consumes("application/x-www-form-urlencoded")]
-        [Produces("application/x-www-form-urlencoded")]
+        [Produces("application/x-www-form-urlencoded", "application/json")]
         [ProducesResponseType(StatusCodes.Status302Found)]
+        [ProducesErrorResponseType(typeof(AuthorizationEndpoint.AuthorizationError))]
         public async Task<ActionResult> Authorize([FromQuery] AuthorizationRequest authorizationRequest)
         {
             var mappedRequest = _authorizationServiceRequestMapper.Map(authorizationRequest);
