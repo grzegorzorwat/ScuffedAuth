@@ -8,6 +8,11 @@ namespace ScuffedAuth.DAL.Mapping
     {
         public AuthorizationCodeEntity Map(AuthorizationCode source)
         {
+            if (source == null)
+            {
+                return null;
+            }
+
             return new AuthorizationCodeEntity()
             {
                 ClientId = source.ClientId,

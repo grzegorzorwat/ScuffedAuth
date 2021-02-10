@@ -1,4 +1,4 @@
-﻿namespace ScuffedAuth.DAL
+﻿namespace ScuffedAuth.DAL.Repositories
 {
     internal abstract class BaseRepository
     {

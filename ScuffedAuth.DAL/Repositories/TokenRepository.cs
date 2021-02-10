@@ -3,7 +3,7 @@ using BaseLibrary;
 using ScuffedAuth.DAL.Entities;
 using System.Threading.Tasks;
 
-namespace ScuffedAuth.DAL
+namespace ScuffedAuth.DAL.Repositories
 {
     internal class TokenRepository : BaseRepository, ITokenRepository
     {

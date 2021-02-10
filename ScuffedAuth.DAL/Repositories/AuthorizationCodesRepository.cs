@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using AuthorizationCode = Authorization.AuthorizationCode;
 using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
 
-namespace ScuffedAuth.DAL
+namespace ScuffedAuth.DAL.Repositories
 {
     internal class AuthorizationCodesRepository : BaseRepository,
         AuthorizationEndpoint.IAuthorizationCodesRepository,

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ScuffedAuth.DAL.Entities;
 using ScuffedAuth.DAL.Mapping;
+using ScuffedAuth.DAL.Repositories;
 using System;
 using AuthorizationCode = Authorization.AuthorizationCode;
 using AuthorizationEndpoint = Authorization.AuthorizationEndpoint;
