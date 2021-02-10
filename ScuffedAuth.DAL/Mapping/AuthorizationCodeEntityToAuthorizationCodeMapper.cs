@@ -1,26 +1,25 @@
 ﻿using Authorization.AuthorizationCode;
-using BaseLibrary;
 using ScuffedAuth.DAL.Entities;
+using System;
+using System.Linq.Expressions;
 
 namespace ScuffedAuth.DAL.Mapping
 {
-    internal class AuthorizationCodeEntityToAuthorizationCodeMapper : IMapper<AuthorizationCodeEntity, AuthorizationCode>
+    internal class AuthorizationCodeEntityToAuthorizationCodeMapper : IExpressionMapper<AuthorizationCodeEntity, AuthorizationCode>
     {
-        public AuthorizationCode Map(AuthorizationCodeEntity source)
+        public Expression<Func<AuthorizationCodeEntity, AuthorizationCode>> MappingExpression
         {
-            if (source == null)
+            get
             {
-                return null;
+                return (source) => new AuthorizationCode()
+                {
+                    ClientId = source.ClientId,
+                    Code = source.Code,
+                    CreationDate = source.CreationDate,
+                    ExpiresIn = source.ExpiresIn,
+                    RedirectUri = source.RedirectUri
+                };
             }
-
-            return new AuthorizationCode()
-            {
-                ClientId = source.ClientId,
-                Code = source.Code,
-                CreationDate = source.CreationDate,
-                ExpiresIn = source.ExpiresIn,
-                RedirectUri = source.RedirectUri
-            };
         }
     }
 }

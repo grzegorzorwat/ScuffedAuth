@@ -1,25 +1,24 @@
 ﻿using Authorization.TokenEndpoint;
-using BaseLibrary;
 using ScuffedAuth.DAL.Entities;
+using System;
+using System.Linq.Expressions;
 
 namespace ScuffedAuth.DAL.Mapping
 {
-    internal class TokenToTokenEntity : IMapper<Token, TokenEntity>
+    internal class TokenToTokenEntity : IExpressionMapper<Token, TokenEntity>
     {
-        public TokenEntity Map(Token source)
+        public Expression<Func<Token, TokenEntity>> MappingExpression
         {
-            if (source == null)
+            get
             {
-                return null;
+                return (source) => new TokenEntity()
+                {
+                    Value = source.Code,
+                    CreationDate = source.CreationDate,
+                    ExpiresIn = (int)source.ExpiresIn.TotalSeconds,
+                    TokenType = source.TokenType
+                };
             }
-
-            return new TokenEntity()
-            {
-                Value = source.Code,
-                CreationDate = source.CreationDate,
-                ExpiresIn = (int)source.ExpiresIn.TotalSeconds,
-                TokenType = source.TokenType
-            };
         }
     }
 }

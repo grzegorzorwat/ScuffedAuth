@@ -1,32 +1,28 @@
 ﻿using Authorization.TokenEndpoint;
-using BaseLibrary;
+using Microsoft.EntityFrameworkCore;
 using ScuffedAuth.DAL.Entities;
+using ScuffedAuth.DAL.Mapping;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ScuffedAuth.DAL.Repositories
 {
     internal class TokenRepository : BaseRepository, ITokenRepository
     {
-        private readonly IMapper<TokenEntity, Token> _tokenMapper;
-        private readonly IMapper<Token, TokenEntity> _tokenEntityMapper;
-
         public TokenRepository(AppDbContext context,
-            IMapper<TokenEntity, Token> tokenMapper,
-            IMapper<Token, TokenEntity> tokenEntityMapper) : base(context)
-        {
-            _tokenMapper = tokenMapper;
-            _tokenEntityMapper = tokenEntityMapper;
-        }
+            IExpressionMappingService mappingService) : base(context, mappingService) { }
 
         public async Task<Token> GetToken(string token)
         {
-            var entity = await _context.Tokens.FindAsync(token);
-            return _tokenMapper.Map(entity);
+            return await _context.Tokens
+                .Where(x => x.Value == token)
+                .Select(_mappingService.MappingExpression<TokenEntity, Token>())
+                .FirstOrDefaultAsync();
         }
 
         public async Task AddToken(Token token)
         {
-            var entity = _tokenEntityMapper.Map(token);
+            var entity = _mappingService.MappingExpression<Token, TokenEntity>().Compile().Invoke(token);
             await _context.Tokens.AddAsync(entity);
         }
     }

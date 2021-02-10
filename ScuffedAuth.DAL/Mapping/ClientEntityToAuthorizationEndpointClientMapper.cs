@@ -1,19 +1,18 @@
 ﻿using Authorization.AuthorizationEndpoint;
-using BaseLibrary;
 using ScuffedAuth.DAL.Entities;
+using System;
+using System.Linq.Expressions;
 
 namespace ScuffedAuth.DAL.Mapping
 {
-    internal class ClientEntityToAuthorizationEndpointClientMapper : IMapper<ClientEntity, Client>
+    internal class ClientEntityToAuthorizationEndpointClientMapper : IExpressionMapper<ClientEntity, Client>
     {
-        public Client Map(ClientEntity source)
+        public Expression<Func<ClientEntity, Client>> MappingExpression
         {
-            if (source == null)
+            get
             {
-                return null;
+                return (source) => new Client(source.Id, source.RedirectUri);
             }
-
-            return new Client(source.Id);
         }
     }
 }

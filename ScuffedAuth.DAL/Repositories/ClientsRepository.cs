@@ -1,24 +1,23 @@
 ﻿using Authentication.ClientCredentials;
-using BaseLibrary;
+using Microsoft.EntityFrameworkCore;
 using ScuffedAuth.DAL.Entities;
+using ScuffedAuth.DAL.Mapping;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ScuffedAuth.DAL.Repositories
 {
     internal class ClientsRepository : BaseRepository, IClientsRepository
     {
-        private readonly IMapper<ClientEntity, Client> _clientMapper;
-
         public ClientsRepository(AppDbContext context,
-            IMapper<ClientEntity, Client> clientMapper) : base(context)
-        {
-            _clientMapper = clientMapper;
-        }
+            IExpressionMappingService mappingService) : base(context, mappingService) { }
 
         public async Task<Client> GetClientByIdAsync(string id)
         {
-            var clientEntity = await _context.Clients.FindAsync(id);
-            return _clientMapper.Map(clientEntity);
+            return await _context.Clients
+                   .Where(x => x.Id == id)
+                   .Select(_mappingService.MappingExpression<ClientEntity, Client>())
+                   .FirstOrDefaultAsync();
         }
     }
 }

@@ -23,13 +23,21 @@ namespace ScuffedAuth.DAL
             services.AddScoped<AuthorizationEndpoint.IAuthorizationCodesRepository, AuthorizationCodesRepository>();
             services.AddScoped<AuthorizationCode.IAuthorizationCodesRepository, AuthorizationCodesRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IMapper<ClientEntity, ClientCredentials.Client>, ClientEntityToClientCredentialsClientMapper>();
-            services.AddScoped<IMapper<ClientEntity, AuthorizationEndpoint.Client>, ClientEntityToAuthorizationEndpointClientMapper>();
-            services.AddScoped<IMapper<TokenEntity, Token>, TokenEntityToTokenMapper>();
-            services.AddScoped<IMapper<AuthorizationCodeEntity, AuthorizationCode.AuthorizationCode>, AuthorizationCodeEntityToAuthorizationCodeMapper>();
-            services.AddScoped<IMapper<Token, TokenEntity>, TokenToTokenEntity>();
-            services.AddScoped<IMapper<AuthorizationEndpoint.Client, ClientEntity>, AuthorizationEnpointClientToClientEntity>();
-            services.AddScoped<IMapper<AuthorizationEndpoint.AuthorizationCode, AuthorizationCodeEntity>, AuthorizationCodeToAuthorizationCodeEntityMapper>();
+            services.AddScoped<IExpressionMapper<ClientEntity, ClientCredentials.Client>,
+                ClientEntityToClientCredentialsClientMapper>();
+            services.AddScoped<IExpressionMapper<ClientEntity, AuthorizationEndpoint.Client>,
+                ClientEntityToAuthorizationEndpointClientMapper>();
+            services.AddScoped<IExpressionMapper<TokenEntity, Token>,
+                TokenEntityToTokenMapper>();
+            services.AddScoped<IExpressionMapper<AuthorizationCodeEntity, AuthorizationCode.AuthorizationCode>,
+                AuthorizationCodeEntityToAuthorizationCodeMapper>();
+            services.AddScoped<IExpressionMapper<Token, TokenEntity>,
+                TokenToTokenEntity>();
+            services.AddScoped<IExpressionMapper<AuthorizationEndpoint.Client, ClientEntity>,
+                AuthorizationEnpointClientToClientEntity>();
+            services.AddScoped<IExpressionMapper<AuthorizationEndpoint.AuthorizationCode, AuthorizationCodeEntity>,
+                AuthorizationCodeToAuthorizationCodeEntityMapper>();
+            services.AddScoped<IExpressionMappingService, RepositoryMappingService>();
         }
 
         public static void MigrateScuffedAuth(this IServiceProvider service)
