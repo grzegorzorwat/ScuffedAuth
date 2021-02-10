@@ -1,5 +1,4 @@
 ﻿using Authorization.TokenEndpoint;
-using AutoMapper;
 using BaseLibrary;
 using ScuffedAuth.DAL.Entities;
 using System.Threading.Tasks;
@@ -9,12 +8,14 @@ namespace ScuffedAuth.DAL
     internal class TokenRepository : BaseRepository, ITokenRepository
     {
         private readonly IMapper<TokenEntity, Token> _tokenMapper;
+        private readonly IMapper<Token, TokenEntity> _tokenEntityMapper;
 
         public TokenRepository(AppDbContext context,
-            IMapper mapper,
-            IMapper<TokenEntity, Token> tokenMapper) : base(context, mapper)
+            IMapper<TokenEntity, Token> tokenMapper,
+            IMapper<Token, TokenEntity> tokenEntityMapper) : base(context)
         {
             _tokenMapper = tokenMapper;
+            _tokenEntityMapper = tokenEntityMapper;
         }
 
         public async Task<Token> GetToken(string token)
@@ -25,7 +26,7 @@ namespace ScuffedAuth.DAL
 
         public async Task AddToken(Token token)
         {
-            var entity = _mapper.Map<Token, TokenEntity>(token);
+            var entity = _tokenEntityMapper.Map(token);
             await _context.Tokens.AddAsync(entity);
         }
     }

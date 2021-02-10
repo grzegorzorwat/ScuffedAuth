@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BaseLibrary;
+﻿using BaseLibrary;
 using ScuffedAuth.DAL.Entities;
 using System.Threading.Tasks;
 using AuthorizationCode = Authorization.AuthorizationCode;
@@ -12,17 +11,22 @@ namespace ScuffedAuth.DAL
         AuthorizationCode.IAuthorizationCodesRepository
     {
         private readonly IMapper<ClientEntity, AuthorizationEndpoint.Client> _authorizationEndpointClientMapper;
+        private readonly IMapper<AuthorizationEndpoint.AuthorizationCode, AuthorizationCodeEntity> _authorizationCodeEntityMapper;
+        private readonly IMapper<AuthorizationCodeEntity, AuthorizationCode.AuthorizationCode> _authorizationCodeMapper;
 
         public AuthorizationCodesRepository(AppDbContext context,
-            IMapper mapper,
-            IMapper<ClientEntity, AuthorizationEndpoint.Client> authorizationEndpointClientMapper) : base(context, mapper)
+            IMapper<ClientEntity, AuthorizationEndpoint.Client> authorizationEndpointClientMapper,
+            IMapper<AuthorizationEndpoint.AuthorizationCode, AuthorizationCodeEntity> authorizationCodeEntityMapper,
+            IMapper<AuthorizationCodeEntity, AuthorizationCode.AuthorizationCode> authorizationCodeMapper) : base(context)
         {
             _authorizationEndpointClientMapper = authorizationEndpointClientMapper;
+            _authorizationCodeEntityMapper = authorizationCodeEntityMapper;
+            _authorizationCodeMapper = authorizationCodeMapper;
         }
 
         public async Task AddAuthorizationCode(AuthorizationEndpoint.AuthorizationCode authorizationCode)
         {
-            var entity = _mapper.Map<AuthorizationEndpoint.AuthorizationCode, AuthorizationCodeEntity>(authorizationCode);
+            var entity = _authorizationCodeEntityMapper.Map(authorizationCode);
             await _context.AuthorizationCodes.AddAsync(entity);
         }
 
@@ -35,7 +39,7 @@ namespace ScuffedAuth.DAL
         public async Task<AuthorizationCode.AuthorizationCode> GetAuthorizationCode(string code)
         {
             var entity = await _context.AuthorizationCodes.FindAsync(code);
-            return _mapper.Map<AuthorizationCodeEntity, AuthorizationCode.AuthorizationCode>(entity);
+            return _authorizationCodeMapper.Map(entity);
         }
     }
 }

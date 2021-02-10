@@ -8,6 +8,11 @@ namespace ScuffedAuth.DAL.Mapping
     {
         public Client Map(ClientEntity source)
         {
+            if (source == null)
+            {
+                return null;
+            }
+
             return new Client(source.Id, source.Secret);
         }
     }

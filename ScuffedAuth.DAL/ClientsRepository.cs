@@ -1,5 +1,4 @@
 ﻿using Authentication.ClientCredentials;
-using AutoMapper;
 using BaseLibrary;
 using ScuffedAuth.DAL.Entities;
 using System.Threading.Tasks;
@@ -11,8 +10,7 @@ namespace ScuffedAuth.DAL
         private readonly IMapper<ClientEntity, Client> _clientMapper;
 
         public ClientsRepository(AppDbContext context,
-            IMapper mapper,
-            IMapper<ClientEntity, Client> clientMapper) : base(context, mapper)
+            IMapper<ClientEntity, Client> clientMapper) : base(context)
         {
             _clientMapper = clientMapper;
         }

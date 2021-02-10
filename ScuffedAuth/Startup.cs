@@ -2,7 +2,6 @@ using Authentication;
 using Authorization;
 using Authorization.IntrospectionEnpoint;
 using Authorization.TokenEndpoint;
-using AutoMapper;
 using BaseLibrary.Responses;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -66,7 +65,6 @@ namespace ScuffedAuth
                     c.OperationFilter<Swagger.RefererFilter>();
                 });
 
-            services.AddAutoMapper(typeof(Startup), typeof(DAL.ServiceConfiguration));
             services
                 .AddOptions<TokenGeneratorSettings>()
                 .Bind(Configuration.GetSection("TokenGeneratorSettings"))

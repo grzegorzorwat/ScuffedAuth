@@ -9,6 +9,11 @@ namespace ScuffedAuth.DAL.Mapping
     {
         public Token Map(TokenEntity source)
         {
+            if(source == null)
+            {
+                return null;
+            }
+
             return new Token()
             {
                 Code = source.Value,
