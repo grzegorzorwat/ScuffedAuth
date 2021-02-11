@@ -35,7 +35,7 @@ namespace ScuffedAuth.DAL.Repositories
         public async Task<AuthorizationCode.AuthorizationCode> GetAuthorizationCode(string code)
         {
             return await _context.AuthorizationCodes
-                .Where(x => x.ClientId == code)
+                .Where(x => x.Code == code)
                 .Select(_mappingService.MappingExpression<AuthorizationCodeEntity, AuthorizationCode.AuthorizationCode>())
                 .FirstOrDefaultAsync();
         }
