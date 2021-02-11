@@ -3,9 +3,9 @@ using ScuffedAuth.DAL.Entities;
 using System;
 using System.Linq.Expressions;
 
-namespace ScuffedAuth.DAL.Mapping
+namespace ScuffedAuth.DAL.Mapping.ClientsRepository
 {
-    internal class ClientEntityToClientCredentialsClientMapper : IExpressionMapper<ClientEntity, Client>
+    internal class ClientEntityToClientMapper : IExpressionMapper<ClientEntity, Client>
     {
         public Expression<Func<ClientEntity, Client>> MappingExpression
         {

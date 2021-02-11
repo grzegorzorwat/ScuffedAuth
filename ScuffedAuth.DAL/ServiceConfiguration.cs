@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ScuffedAuth.DAL.Entities;
 using ScuffedAuth.DAL.Mapping;
+using ScuffedAuth.DAL.Mapping.AuthorizationCodesRepository;
+using ScuffedAuth.DAL.Mapping.TokenRepository;
 using ScuffedAuth.DAL.Repositories;
 using System;
 using AuthorizationCode = Authorization.AuthorizationCode;
@@ -24,20 +26,18 @@ namespace ScuffedAuth.DAL
             services.AddScoped<AuthorizationCode.IAuthorizationCodesRepository, AuthorizationCodesRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IExpressionMapper<ClientEntity, ClientCredentials.Client>,
-                ClientEntityToClientCredentialsClientMapper>();
+                Mapping.ClientsRepository.ClientEntityToClientMapper>();
             services.AddScoped<IExpressionMapper<ClientEntity, AuthorizationEndpoint.Client>,
-                ClientEntityToAuthorizationEndpointClientMapper>();
+                Mapping.AuthorizationCodesRepository.ClientEntityToClientMapper>();
             services.AddScoped<IExpressionMapper<TokenEntity, Token>,
                 TokenEntityToTokenMapper>();
             services.AddScoped<IExpressionMapper<AuthorizationCodeEntity, AuthorizationCode.AuthorizationCode>,
                 AuthorizationCodeEntityToAuthorizationCodeMapper>();
             services.AddScoped<IExpressionMapper<Token, TokenEntity>,
-                TokenToTokenEntity>();
-            services.AddScoped<IExpressionMapper<AuthorizationEndpoint.Client, ClientEntity>,
-                AuthorizationEnpointClientToClientEntity>();
+                TokenToTokenEntityMapper>();
             services.AddScoped<IExpressionMapper<AuthorizationEndpoint.AuthorizationCode, AuthorizationCodeEntity>,
                 AuthorizationCodeToAuthorizationCodeEntityMapper>();
-            services.AddScoped<IExpressionMappingService, RepositoryMappingService>();
+            services.AddScoped<IExpressionMappingService, ExpressionMappingService>();
         }
 
         public static void MigrateScuffedAuth(this IServiceProvider service)

@@ -3,7 +3,7 @@ using ScuffedAuth.DAL.Entities;
 using System;
 using System.Linq.Expressions;
 
-namespace ScuffedAuth.DAL.Mapping
+namespace ScuffedAuth.DAL.Mapping.TokenRepository
 {
     internal class TokenEntityToTokenMapper : IExpressionMapper<TokenEntity, Token>
     {
